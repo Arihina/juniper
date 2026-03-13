@@ -1,15 +1,19 @@
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 
 native_module = Extension(
     name="junipre._native",
     sources=[
         "src/junipre/cext/bindings.c",
         "source/slist.c",
+        "source/hashmap.c"
     ],
     include_dirs=["source"],
     extra_compile_args=["-O3"],
 )
 
 setup(
-    ext_modules=[native_module],
+    name="juniper",
+    version="0.1.0",
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
 )
