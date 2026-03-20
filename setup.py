@@ -1,4 +1,4 @@
-from setuptools import setup, Extension, find_packages
+from setuptools import setup, Extension, find_packages # type: ignore
 
 native_module = Extension(
     name="junipre._native",
