@@ -3,6 +3,8 @@
 
 SList* slist_create() {
     SList* list = malloc(sizeof(SList));
+    if (!list) return NULL;
+
     list->head = NULL;
     list->size = 0;
     return list;
@@ -10,6 +12,8 @@ SList* slist_create() {
 
 void slist_push_front(SList* list, int value) {
     SListNode* node = malloc(sizeof(SListNode));
+    if (!node) return;
+
     node->value = value;
     node->next = list->head;
     list->head = node;
