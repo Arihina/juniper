@@ -1,8 +1,8 @@
-from junipre import _native
+from junipre import data_structures
 
-lst = _native.create()
-_native.push_front(lst, 10)
-_native.push_front(lst, 20)
+lst = data_structures.slist_create()
+data_structures.slist_push_front(lst, 10)
+data_structures.slist_push_front(lst, 20)
 
-print(_native.pop_front(lst))
-print(_native.pop_front(lst))
+print(data_structures.slist_pop_front(lst))
+print(data_structures.slist_pop_front(lst))
