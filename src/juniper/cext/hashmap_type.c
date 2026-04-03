@@ -9,7 +9,7 @@ typedef struct {
 static PyObject *PyHashMap_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
     PyHashMapObject *self;
-    size_t capacity = 16;  // дефолт
+    size_t capacity = 16;
 
     if (!PyArg_ParseTuple(args, "|n", &capacity))
         return NULL;

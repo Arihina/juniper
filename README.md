@@ -8,6 +8,6 @@ chmod +x run_valgrind.sh
 pip uninstall juniper -y
 pip install -e . --force-reinstall
 
-tree -I "__pycache__|*.pyc|.git|__pycache__|.venv|venv" -L 3
+tree -I "__pycache__|*.pyc|.git|__pycache__|.venv|venv" -L 5
 
 rm -rf build *.egg-info src/juniper/*.so
