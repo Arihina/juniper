@@ -1,8 +1,9 @@
-from junipre import data_structures
+from juniper import SList
 
-lst = data_structures.slist_create()
-data_structures.slist_push_front(lst, 10)
-data_structures.slist_push_front(lst, 20)
+lst = SList()
 
-print(data_structures.slist_pop_front(lst))
-print(data_structures.slist_pop_front(lst))
+lst.push_front(10)
+lst.push_front(20)
+
+print(lst.pop_front())
+print(lst.pop_front())

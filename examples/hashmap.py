@@ -1,13 +1,14 @@
-from junipre import data_structures
+from juniper import HashMap
 
-map_capsule = data_structures.hashmap_create()
+m = HashMap()
 
-data_structures.hashmap_put(map_capsule, "a", 100)
-data_structures.hashmap_put(map_capsule, "b", 200)
+m["a"] = 100
+m["b"] = 200
 
-print(data_structures.hashmap_get(map_capsule, "a"))
-print(data_structures.hashmap_get(map_capsule, "b"))
-print(data_structures.hashmap_get(map_capsule, "c"))
+print(m["a"])
+print(m["b"])
+print(m["c"])
 
-data_structures.hashmap_remove(map_capsule, "a")
-print(data_structures.hashmap_get(map_capsule, "a"))
+del m["a"]
+
+print(m["a"])

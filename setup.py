@@ -1,15 +1,15 @@
-from setuptools import setup, Extension, find_packages # type: ignore
+from setuptools import setup, Extension, find_packages
 
 native_module = Extension(
-    name="junipre._native",
+    name="juniper._native",
     sources=[
-    "src/junipre/cext/module.c",
-    "src/junipre/cext/slist_module.c",
-    "src/junipre/cext/hashmap_module.c",
+    "src/juniper/cext/module.c",
+    "src/juniper/cext/slist_type.c",
+    "src/juniper/cext/hashmap_type.c",
     "source/slist.c",
     "source/hashmap.c",
     ],
-    include_dirs=["source"],
+    include_dirs=["source", "src/juniper/cext"],
     extra_compile_args=["-O3"],
 )
 
@@ -18,5 +18,5 @@ setup(
     version="0.1.0",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    ext_modules=[native_module], 
+    ext_modules=[native_module],
 )
