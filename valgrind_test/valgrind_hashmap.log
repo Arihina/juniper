@@ -1,122 +1,150 @@
-==19263== Memcheck, a memory error detector
-==19263== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==19263== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==19263== Command: python3.11 examples/hashmap.py
-==19263== Parent PID: 4963
-==19263== 
-==19263== 
-==19263== HEAP SUMMARY:
-==19263==     in use at exit: 395,566 bytes in 7 blocks
-==19263==   total heap usage: 1,191 allocs, 1,184 frees, 1,777,777 bytes allocated
-==19263== 
-==19263== 96 bytes in 1 blocks are still reachable in loss record 1 of 7
-==19263==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==19263==    by 0x40162DC: calloc (rtld-malloc.h:44)
-==19263==    by 0x40162DC: _dl_check_map_versions (dl-version.c:273)
-==19263==    by 0x400ED13: dl_open_worker_begin (dl-open.c:600)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x400DF99: dl_open_worker (dl-open.c:782)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x400E34D: _dl_open (dl-open.c:883)
-==19263==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
-==19263==    by 0x4A2E12D: _dlerror_run (dlerror.c:138)
-==19263==    by 0x4A2E6C7: dlopen_implementation (dlopen.c:71)
-==19263==    by 0x4A2E6C7: dlopen@@GLIBC_2.34 (dlopen.c:81)
-==19263== 
-==19263== 98 bytes in 1 blocks are still reachable in loss record 2 of 7
-==19263==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==19263==    by 0x40271DF: malloc (rtld-malloc.h:56)
-==19263==    by 0x40271DF: strdup (strdup.c:42)
-==19263==    by 0x400A588: _dl_map_object (dl-load.c:2259)
-==19263==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x400DF99: dl_open_worker (dl-open.c:782)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x400E34D: _dl_open (dl-open.c:883)
-==19263==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
-==19263==    by 0x4A2E12D: _dlerror_run (dlerror.c:138)
-==19263== 
-==19263== 98 bytes in 1 blocks are still reachable in loss record 3 of 7
-==19263==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==19263==    by 0x400DD20: malloc (rtld-malloc.h:56)
-==19263==    by 0x400DD20: _dl_new_object (dl-object.c:199)
-==19263==    by 0x4008C82: _dl_map_object_from_fd (dl-load.c:1063)
-==19263==    by 0x400A600: _dl_map_object (dl-load.c:2327)
-==19263==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x400DF99: dl_open_worker (dl-open.c:782)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x400E34D: _dl_open (dl-open.c:883)
-==19263==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
-==19263== 
-==19263== 768 bytes in 1 blocks are still reachable in loss record 4 of 7
-==19263==    at 0x48487A9: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==19263==    by 0x4C921D: ??? (in /usr/bin/python3.11)
-==19263==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
-==19263==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
-==19263==    by 0x62554D: ??? (in /usr/bin/python3.11)
-==19263==    by 0x6208E2: ??? (in /usr/bin/python3.11)
-==19263==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
-==19263==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
-==19263==    by 0x61EF40: ??? (in /usr/bin/python3.11)
-==19263==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
-==19263==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
-==19263== 
-==19263== 1,290 bytes in 1 blocks are still reachable in loss record 5 of 7
-==19263==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==19263==    by 0x400DA02: calloc (rtld-malloc.h:44)
-==19263==    by 0x400DA02: _dl_new_object (dl-object.c:92)
-==19263==    by 0x4008C82: _dl_map_object_from_fd (dl-load.c:1063)
-==19263==    by 0x400A600: _dl_map_object (dl-load.c:2327)
-==19263==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x400DF99: dl_open_worker (dl-open.c:782)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x400E34D: _dl_open (dl-open.c:883)
-==19263==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
-==19263==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==19263==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
-==19263== 
-==19263== 131,072 bytes in 1 blocks are still reachable in loss record 6 of 7
-==19263==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==19263==    by 0x62941B: ??? (in /usr/bin/python3.11)
-==19263==    by 0x4C9115: ??? (in /usr/bin/python3.11)
-==19263==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
-==19263==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
-==19263==    by 0x62554D: ??? (in /usr/bin/python3.11)
-==19263==    by 0x6208E2: ??? (in /usr/bin/python3.11)
-==19263==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
-==19263==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
-==19263==    by 0x61EF40: ??? (in /usr/bin/python3.11)
-==19263==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
-==19263==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
-==19263== 
-==19263== 262,144 bytes in 1 blocks are still reachable in loss record 7 of 7
-==19263==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==19263==    by 0x62939E: ??? (in /usr/bin/python3.11)
-==19263==    by 0x4C9115: ??? (in /usr/bin/python3.11)
-==19263==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
-==19263==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
-==19263==    by 0x62554D: ??? (in /usr/bin/python3.11)
-==19263==    by 0x6208E2: ??? (in /usr/bin/python3.11)
-==19263==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
-==19263==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
-==19263==    by 0x61EF40: ??? (in /usr/bin/python3.11)
-==19263==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
-==19263==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
-==19263== 
-==19263== LEAK SUMMARY:
-==19263==    definitely lost: 0 bytes in 0 blocks
-==19263==    indirectly lost: 0 bytes in 0 blocks
-==19263==      possibly lost: 0 bytes in 0 blocks
-==19263==    still reachable: 395,566 bytes in 7 blocks
-==19263==         suppressed: 0 bytes in 0 blocks
-==19263== 
-==19263== For lists of detected and suppressed errors, rerun with: -s
-==19263== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==20985== Memcheck, a memory error detector
+==20985== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==20985== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==20985== Command: python3.11 examples/hashmap.py
+==20985== Parent PID: 20982
+==20985== 
+==20985== 
+==20985== HEAP SUMMARY:
+==20985==     in use at exit: 400,958 bytes in 9 blocks
+==20985==   total heap usage: 1,184 allocs, 1,175 frees, 1,758,501 bytes allocated
+==20985== 
+==20985== 96 bytes in 1 blocks are still reachable in loss record 1 of 9
+==20985==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20985==    by 0x40162DC: calloc (rtld-malloc.h:44)
+==20985==    by 0x40162DC: _dl_check_map_versions (dl-version.c:273)
+==20985==    by 0x400ED13: dl_open_worker_begin (dl-open.c:600)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x400DF99: dl_open_worker (dl-open.c:782)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x400E34D: _dl_open (dl-open.c:883)
+==20985==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
+==20985==    by 0x4A2E12D: _dlerror_run (dlerror.c:138)
+==20985==    by 0x4A2E6C7: dlopen_implementation (dlopen.c:71)
+==20985==    by 0x4A2E6C7: dlopen@@GLIBC_2.34 (dlopen.c:81)
+==20985== 
+==20985== 98 bytes in 1 blocks are still reachable in loss record 2 of 9
+==20985==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20985==    by 0x40271DF: malloc (rtld-malloc.h:56)
+==20985==    by 0x40271DF: strdup (strdup.c:42)
+==20985==    by 0x400A588: _dl_map_object (dl-load.c:2259)
+==20985==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x400DF99: dl_open_worker (dl-open.c:782)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x400E34D: _dl_open (dl-open.c:883)
+==20985==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
+==20985==    by 0x4A2E12D: _dlerror_run (dlerror.c:138)
+==20985== 
+==20985== 98 bytes in 1 blocks are still reachable in loss record 3 of 9
+==20985==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20985==    by 0x400DD20: malloc (rtld-malloc.h:56)
+==20985==    by 0x400DD20: _dl_new_object (dl-object.c:199)
+==20985==    by 0x4008C82: _dl_map_object_from_fd (dl-load.c:1063)
+==20985==    by 0x400A600: _dl_map_object (dl-load.c:2327)
+==20985==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x400DF99: dl_open_worker (dl-open.c:782)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x400E34D: _dl_open (dl-open.c:883)
+==20985==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
+==20985== 
+==20985== 768 bytes in 1 blocks are still reachable in loss record 4 of 9
+==20985==    at 0x48487A9: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20985==    by 0x4C921D: ??? (in /usr/bin/python3.11)
+==20985==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
+==20985==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
+==20985==    by 0x62554D: ??? (in /usr/bin/python3.11)
+==20985==    by 0x6208E2: ??? (in /usr/bin/python3.11)
+==20985==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
+==20985==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
+==20985==    by 0x61EF40: ??? (in /usr/bin/python3.11)
+==20985==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
+==20985==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
+==20985== 
+==20985== 768 bytes in 1 blocks are still reachable in loss record 5 of 9
+==20985==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20985==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
+==20985==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
+==20985==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
+==20985==    by 0x62950B: ??? (in /usr/bin/python3.11)
+==20985==    by 0x628BED: ??? (in /usr/bin/python3.11)
+==20985==    by 0x6208E2: ??? (in /usr/bin/python3.11)
+==20985==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
+==20985==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
+==20985==    by 0x61EF40: ??? (in /usr/bin/python3.11)
+==20985==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
+==20985==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
+==20985== 
+==20985== 1,290 bytes in 1 blocks are still reachable in loss record 6 of 9
+==20985==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20985==    by 0x400DA02: calloc (rtld-malloc.h:44)
+==20985==    by 0x400DA02: _dl_new_object (dl-object.c:92)
+==20985==    by 0x4008C82: _dl_map_object_from_fd (dl-load.c:1063)
+==20985==    by 0x400A600: _dl_map_object (dl-load.c:2327)
+==20985==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x400DF99: dl_open_worker (dl-open.c:782)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x400E34D: _dl_open (dl-open.c:883)
+==20985==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
+==20985==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==20985==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
+==20985== 
+==20985== 4,624 bytes in 1 blocks are still reachable in loss record 7 of 9
+==20985==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20985==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
+==20985==    by 0x4D4CA8: ??? (in /usr/bin/python3.11)
+==20985==    by 0x4CF990: PyType_Ready (in /usr/bin/python3.11)
+==20985==    by 0x62950B: ??? (in /usr/bin/python3.11)
+==20985==    by 0x628BED: ??? (in /usr/bin/python3.11)
+==20985==    by 0x6208E2: ??? (in /usr/bin/python3.11)
+==20985==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
+==20985==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
+==20985==    by 0x61EF40: ??? (in /usr/bin/python3.11)
+==20985==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
+==20985==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
+==20985== 
+==20985== 131,072 bytes in 1 blocks are still reachable in loss record 8 of 9
+==20985==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20985==    by 0x62941B: ??? (in /usr/bin/python3.11)
+==20985==    by 0x4C9115: ??? (in /usr/bin/python3.11)
+==20985==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
+==20985==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
+==20985==    by 0x62554D: ??? (in /usr/bin/python3.11)
+==20985==    by 0x6208E2: ??? (in /usr/bin/python3.11)
+==20985==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
+==20985==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
+==20985==    by 0x61EF40: ??? (in /usr/bin/python3.11)
+==20985==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
+==20985==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
+==20985== 
+==20985== 262,144 bytes in 1 blocks are still reachable in loss record 9 of 9
+==20985==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==20985==    by 0x62939E: ??? (in /usr/bin/python3.11)
+==20985==    by 0x4C9115: ??? (in /usr/bin/python3.11)
+==20985==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
+==20985==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
+==20985==    by 0x62554D: ??? (in /usr/bin/python3.11)
+==20985==    by 0x6208E2: ??? (in /usr/bin/python3.11)
+==20985==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
+==20985==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
+==20985==    by 0x61EF40: ??? (in /usr/bin/python3.11)
+==20985==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
+==20985==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
+==20985== 
+==20985== LEAK SUMMARY:
+==20985==    definitely lost: 0 bytes in 0 blocks
+==20985==    indirectly lost: 0 bytes in 0 blocks
+==20985==      possibly lost: 0 bytes in 0 blocks
+==20985==    still reachable: 400,958 bytes in 9 blocks
+==20985==         suppressed: 0 bytes in 0 blocks
+==20985== 
+==20985== For lists of detected and suppressed errors, rerun with: -s
+==20985== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
