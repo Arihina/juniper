@@ -2,6 +2,7 @@ venv/
 _native/
 .vscode/
 src/juniper.egg-info
-src/junipre/__pycache__
-src/junipre/_native.cpython-311-x86_64-linux-gnu.so
+src/juniper/__pycache__
+src/juniper/_native.cpython-311-x86_64-linux-gnu.so
 main.c
+*.so
