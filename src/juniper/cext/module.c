@@ -1,5 +1,6 @@
 #include <Python.h>
 #include "slist_type.h"
+#include "dlist_type.h"
 #include "hashmap_type.h"
 #include "rbset_type.h"
 
@@ -25,6 +26,16 @@ PyMODINIT_FUNC PyInit__native(void)
     Py_INCREF(&PySListType);
     if (PyModule_AddObject(m, "SList", (PyObject *)&PySListType) < 0) {
         Py_DECREF(&PySListType);
+        Py_DECREF(m);
+        return NULL;
+    }
+ 
+    if (PyType_Ready(&PyDListType) < 0)
+        return NULL;
+ 
+    Py_INCREF(&PyDListType);
+    if (PyModule_AddObject(m, "DList", (PyObject *)&PyDListType) < 0) {
+        Py_DECREF(&PyDListType);
         Py_DECREF(m);
         return NULL;
     }

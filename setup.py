@@ -5,9 +5,11 @@ native_module = Extension(
     sources=[
     "src/juniper/cext/module.c",
     "src/juniper/cext/slist_type.c",
+    "src/juniper/cext/dlist_type.c",
     "src/juniper/cext/hashmap_type.c",
     "src/juniper/cext/rbset_type.c",
     "source/slist.c",
+    "source/dlist.c",
     "source/hashmap.c",
     "source/rbtree.c",
     ],
