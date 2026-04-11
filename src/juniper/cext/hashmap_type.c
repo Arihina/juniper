@@ -1,4 +1,5 @@
 #include <Python.h>
+#include <string.h>
 #include "hashmap/hashmap.h"
 #include "hashmap/hashmap_iter.h"
 
@@ -7,16 +8,18 @@ typedef struct {
     hashmap *hm;
 } PyHashMap;
 
-typedef struct {
-    PyObject_HEAD
-    hm_iter it;
-} PyHMIter;
+typedef enum {
+    HM_ITER_KEYS,
+    HM_ITER_VALUES,
+    HM_ITER_ITEMS
+} hm_iter_mode;
 
 typedef struct {
     PyObject_HEAD
     hm_iter it;
     hashmap *hm;
-} PyHMItemsIter;
+    hm_iter_mode mode;
+} PyHMIter;
 
 static size_t py_hash(void *o) {
     return PyObject_Hash((PyObject*)o);
@@ -93,8 +96,29 @@ static PyObject* PyHMIter_next(PyHMIter *self) {
         return NULL;
     }
 
-    Py_INCREF((PyObject*)k);
-    return (PyObject*)k;
+    void *v = hm_get(self->hm, k);
+    if (!v) {
+        PyErr_SetString(PyExc_RuntimeError, "HashMap corrupted");
+        return NULL;
+    }
+
+    PyObject *key = (PyObject*)k;
+    PyObject *val = (PyObject*)v;
+
+    if (self->mode == HM_ITER_KEYS) {
+        Py_INCREF(key);
+        return key;
+    }
+
+    if (self->mode == HM_ITER_VALUES) {
+        Py_INCREF(val);
+        return val;
+    }
+
+    Py_INCREF(key);
+    Py_INCREF(val);
+
+    return PyTuple_Pack(2, key, val);
 }
 
 PyTypeObject PyHMIterType = {
@@ -106,63 +130,33 @@ PyTypeObject PyHMIterType = {
     .tp_iternext = (iternextfunc)PyHMIter_next,
 };
 
-static PyObject *hm_iter_py(PyHashMap *self) {
+static PyObject* hm_make_iter(PyHashMap *self, hm_iter_mode mode) {
     PyHMIter *it = PyObject_New(PyHMIter, &PyHMIterType);
     if (!it) return NULL;
 
     memset(&it->it, 0, sizeof(hm_iter));
     hm_iter_init(&it->it, self->hm);
 
+    it->hm = self->hm;
+    it->mode = mode;
+
     return (PyObject*)it;
 }
 
-static PyObject* PyHMItemsIter_next(PyHMItemsIter *self) {
-    void *k = hm_iter_next(&self->it);
-
-    if (!k) {
-        PyErr_SetNone(PyExc_StopIteration);
-        return NULL;
-    }
-
-    void *v = hm_get(self->hm, k);
-    if (!v) {
-        PyErr_SetString(PyExc_RuntimeError, "HashMap corrupted");
-        return NULL;
-    }
-
-    PyObject *key = (PyObject*)k;
-    PyObject *val = (PyObject*)v;
-
-    Py_INCREF(key);
-    Py_INCREF(val);
-
-    return PyTuple_Pack(2, key, val);
+static PyObject* hm_iter_py(PyHashMap *self) {
+    return hm_make_iter(self, HM_ITER_KEYS);
 }
 
-static PyObject* PyHMItemsIter_iter(PyObject *self) {
-    Py_INCREF(self);
-    return self;
+static PyObject* hm_keys(PyHashMap *self, PyObject *Py_UNUSED(ignored)) {
+    return hm_make_iter(self, HM_ITER_KEYS);
 }
 
-PyTypeObject PyHMItemsIterType = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "juniper.HashMapItemsIterator",
-    .tp_basicsize = sizeof(PyHMItemsIter),
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_iter = PyHMItemsIter_iter,
-    .tp_iternext = (iternextfunc)PyHMItemsIter_next,
-};
+static PyObject* hm_values(PyHashMap *self, PyObject *Py_UNUSED(ignored)) {
+    return hm_make_iter(self, HM_ITER_VALUES);
+}
 
 static PyObject* hm_items(PyHashMap *self, PyObject *Py_UNUSED(ignored)) {
-    PyHMItemsIter *it = PyObject_New(PyHMItemsIter, &PyHMItemsIterType);
-    if (!it) return NULL;
-
-    memset(&it->it, 0, sizeof(hm_iter));
-    hm_iter_init(&it->it, self->hm);
-
-    it->hm = self->hm;
-
-    return (PyObject*)it;
+    return hm_make_iter(self, HM_ITER_ITEMS);
 }
 
 static void hm_dealloc(PyHashMap *self) {
@@ -185,6 +179,8 @@ static void hm_dealloc(PyHashMap *self) {
 }
 
 static PyMethodDef hashmap_methods[] = {
+    {"keys", (PyCFunction)hm_keys, METH_NOARGS, "Return keys iterator"},
+    {"values", (PyCFunction)hm_values, METH_NOARGS, "Return values iterator"},
     {"items", (PyCFunction)hm_items, METH_NOARGS, "Return items iterator"},
     {NULL}
 };

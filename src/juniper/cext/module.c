@@ -47,9 +47,6 @@ PyMODINIT_FUNC PyInit__native(void)
     if (PyType_Ready(&PyHMIterType) < 0)
         return NULL;
 
-    if (PyType_Ready(&PyHMItemsIterType) < 0)
-        return NULL;
-
     Py_INCREF(&HashMapType);
     if (PyModule_AddObject(m, "HashMap", (PyObject *)&HashMapType) < 0) {
         Py_DECREF(&HashMapType);

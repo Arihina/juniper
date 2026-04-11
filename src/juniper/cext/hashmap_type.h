@@ -3,4 +3,3 @@
 
 extern PyTypeObject HashMapType;
 extern PyTypeObject PyHMIterType;
-extern PyTypeObject PyHMItemsIterType;
