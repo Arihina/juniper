@@ -2,13 +2,13 @@ from juniper import HashMap
 
 m = HashMap()
 
-m["a"] = 100
-m["b"] = 200
+for i in range(100000):
+    m[str(i)] = i
 
-print(m["a"])
-print(m["b"])
-print(m["c"])
+for i in range(50000):
+    del m[str(i)]
 
-del m["a"]
+for k, v in m.items():
+    pass
 
-print(m["a"])
+print(len(m))

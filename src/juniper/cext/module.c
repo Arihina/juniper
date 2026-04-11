@@ -41,12 +41,18 @@ PyMODINIT_FUNC PyInit__native(void)
         return NULL;
     }
  
-    if (PyType_Ready(&PyHashMapType) < 0)
+    if (PyType_Ready(&HashMapType) < 0)
         return NULL;
- 
-    Py_INCREF(&PyHashMapType);
-    if (PyModule_AddObject(m, "HashMap", (PyObject *)&PyHashMapType) < 0) {
-        Py_DECREF(&PyHashMapType);
+
+    if (PyType_Ready(&PyHMIterType) < 0)
+        return NULL;
+
+    if (PyType_Ready(&PyHMItemsIterType) < 0)
+        return NULL;
+
+    Py_INCREF(&HashMapType);
+    if (PyModule_AddObject(m, "HashMap", (PyObject *)&HashMapType) < 0) {
+        Py_DECREF(&HashMapType);
         Py_DECREF(m);
         return NULL;
     }
