@@ -2,6 +2,7 @@
 #include "slist_type.h"
 #include "dlist_type.h"
 #include "hashmap_type.h"
+#include "rhmap_type.h"
 #include "rbset_type.h"
 
 static PyModuleDef juniper_module = {
@@ -56,6 +57,16 @@ PyMODINIT_FUNC PyInit__native(void)
     Py_INCREF(&PyRBSetType);
     if (PyModule_AddObject(m, "RBSet", (PyObject *)&PyRBSetType) < 0) {
         Py_DECREF(&PyRBSetType);
+        Py_DECREF(m);
+        return NULL;
+    }
+ 
+    if (PyType_Ready(&PyRHMapType) < 0)
+        return NULL;
+ 
+    Py_INCREF(&PyRHMapType);
+    if (PyModule_AddObject(m, "RHMap", (PyObject *)&PyRHMapType) < 0) {
+        Py_DECREF(&PyRHMapType);
         Py_DECREF(m);
         return NULL;
     }
