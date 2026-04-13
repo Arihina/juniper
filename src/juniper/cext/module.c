@@ -4,6 +4,8 @@
 #include "hashmap_type.h"
 #include "rhmap_type.h"
 #include "rbset_type.h"
+#include "avlset_type.h"
+
 
 static PyModuleDef juniper_module = {
     PyModuleDef_HEAD_INIT,
@@ -70,6 +72,16 @@ PyMODINIT_FUNC PyInit__native(void)
     Py_INCREF(&PyRHMapType);
     if (PyModule_AddObject(m, "RHMap", (PyObject *)&PyRHMapType) < 0) {
         Py_DECREF(&PyRHMapType);
+        Py_DECREF(m);
+        return NULL;
+    }
+
+    if (PyType_Ready(&PyAVLSetType) < 0)
+        return NULL;
+ 
+    Py_INCREF(&PyAVLSetType);
+    if (PyModule_AddObject(m, "AVLSet", (PyObject *)&PyAVLSetType) < 0) {
+        Py_DECREF(&PyAVLSetType);
         Py_DECREF(m);
         return NULL;
     }

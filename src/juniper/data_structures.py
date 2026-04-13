@@ -9,6 +9,7 @@ from ._native import (
     HashMap as _HashMap,
     RHMap as _RHMap,
     RBSet as _RBSet,
+    AVLSet as _AVLSet,
 )
 
 
@@ -32,6 +33,11 @@ class RHMap(_RHMap):
 class RBSet(_RBSet):
     """Sorted set based on a red-black tree, implemented in C."""
     pass
- 
-__all__ = ["SList", "DList", "HashMap", "RHMap", "RBSet"]
+
+class AVLSet(_AVLSet):
+    """Sorted set based on an AVL tree, implemented in C."""
+    pass
+
+
+__all__ = ["SList", "DList", "HashMap", "RHMap", "RBSet", "AVLSet"]
 
