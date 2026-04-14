@@ -3,6 +3,8 @@
 #include <string.h>
 
 static const double RHMAP_MAX_LOAD = 0.75;
+static const double RHMAP_MIN_LOAD = 0.25;
+static const size_t RHMAP_MIN_CAP  = 8;
 
 static size_t next_pow2(size_t n)
 {
@@ -99,7 +101,6 @@ static int rhmap_resize(RHMap *map, size_t new_cap)
                     map->size++;
                     break;
                 }
-
                 if (psl > s->psl) {
                     incoming.psl = psl;
                     RHSlot tmp = *s;
@@ -162,7 +163,7 @@ int rhmap_put(RHMap *map, PyObject *key, PyObject *value)
                 Py_INCREF(value);
                 Py_DECREF(s->value);
                 s->value = value;
-                return 1;\
+                return 1;
             }
         }
 
@@ -277,5 +278,15 @@ int rhmap_remove(RHMap *map, PyObject *key)
     }
 
     map->size--;
+
+    {
+        size_t half = map->capacity / 2;
+        if (half >= RHMAP_MIN_CAP &&
+            map->size < (size_t)(map->capacity * RHMAP_MIN_LOAD))
+        {
+            rhmap_resize(map, half);
+        }
+    }
+
     return 1;
 }
