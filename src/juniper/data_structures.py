@@ -10,6 +10,8 @@ from ._native import (
     RHMap as _RHMap,
     RBSet as _RBSet,
     AVLSet as _AVLSet,
+    BTreeSet as _BTreeSet,
+    BTHashMap as _BTHashMap,
 )
 
 
@@ -38,6 +40,14 @@ class AVLSet(_AVLSet):
     """Sorted set based on an AVL tree, implemented in C."""
     pass
 
+class BTreeSet(_BTreeSet):
+    """Sorted set based on a B-tree, implemented in C."""
+    pass
 
-__all__ = ["SList", "DList", "HashMap", "RHMap", "RBSet", "AVLSet"]
+class BTHashMap(_BTHashMap):
+    """Hash map with B-tree buckets, implemented in C."""
+    pass
+
+
+__all__ = ["SList", "DList", "HashMap", "RHMap", "RBSet", "AVLSet", "BTreeSet", "BTHashMap"]
 

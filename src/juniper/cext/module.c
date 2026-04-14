@@ -3,7 +3,9 @@
 #include "dlist_type.h"
 #include "hashmap_type.h"
 #include "rhmap_type.h"
+#include "bthashmap_type.h"
 #include "rbset_type.h"
+#include "bset_type.h"
 #include "avlset_type.h"
 
 
@@ -85,6 +87,26 @@ PyMODINIT_FUNC PyInit__native(void)
         Py_DECREF(m);
         return NULL;
     }
+    
+    if (PyType_Ready(&PyBTreeSetType) < 0)
+        return NULL;
  
+    Py_INCREF(&PyBTreeSetType);
+    if (PyModule_AddObject(m, "BTreeSet", (PyObject *)&PyBTreeSetType) < 0) {
+        Py_DECREF(&PyBTreeSetType);
+        Py_DECREF(m);
+        return NULL;
+    }
+
+    if (PyType_Ready(&PyBTHashMapType) < 0)
+        return NULL;
+ 
+    Py_INCREF(&PyBTHashMapType);
+    if (PyModule_AddObject(m, "BTHashMap", (PyObject *)&PyBTHashMapType) < 0) {
+        Py_DECREF(&PyBTHashMapType);
+        Py_DECREF(m);
+        return NULL;
+    }
+
     return m;
 }
