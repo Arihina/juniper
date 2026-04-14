@@ -5,6 +5,10 @@
 
 #define TREEIFY_THRESHOLD 8
 #define UNTREEIFY_THRESHOLD 6
+#define LOAD_FACTOR_MAX 0.75
+#define LOAD_FACTOR_MIN 0.25
+#define HASHMAP_MIN_CAP 8
+
 
 static bucket *get_bucket(hashmap *hm,size_t h){
     size_t i=h%hm->cap;
@@ -23,7 +27,89 @@ hashmap *hm_new(size_t cap,hash_fn h,cmp_fn c){
     return hm;
 }
 
+static void hm_resize(hashmap *hm, size_t new_cap) {
+    if (new_cap < HASHMAP_MIN_CAP)
+        new_cap = HASHMAP_MIN_CAP;
+
+    bucket **old_buckets = hm->buckets;
+    size_t old_cap = hm->cap;
+
+    hm->buckets = calloc(new_cap, sizeof(bucket*));
+    hm->cap = new_cap;
+    hm->size = 0;
+
+    for (size_t i = 0; i < old_cap; i++) {
+        bucket *b = old_buckets[i];
+        if (!b) continue;
+
+        if (b->k == LIST) {
+            bucket_list *l = b->impl;
+
+            for (list_node *n = l->head; n; n = n->next) {
+                hm_set(hm, n->key, n->val);
+            }
+
+        } else {
+            bucket_tree *t = b->impl;
+
+            rb_node *stack[64];
+            int sp = 0;
+            rb_node *cur = t->root;
+
+            while (cur || sp) {
+                while (cur) {
+                    stack[sp++] = cur;
+                    cur = cur->l;
+                }
+
+                cur = stack[--sp];
+                hm_set(hm, cur->key, cur->val);
+                cur = cur->r;
+            }
+        }
+
+        if (b->k == LIST) {
+            bucket_list *l = b->impl;
+
+            list_node *n = l->head;
+            while (n) {
+                list_node *next = n->next;
+                free(n);
+                n = next;
+            }
+            free(l);
+        } else {
+            bucket_tree *t = b->impl;
+
+            rb_node *stack[64];
+            int sp = 0;
+            rb_node *cur = t->root;
+
+            while (cur || sp) {
+                while (cur) {
+                    stack[sp++] = cur;
+                    cur = cur->l;
+                }
+
+                cur = stack[--sp];
+                rb_node *right = cur->r;
+                free(cur);
+                cur = right;
+            }
+            free(t);
+        }
+
+        free(b);
+    }
+
+    free(old_buckets);
+}
+
 void hm_set(hashmap *hm, void *k, void *v) {
+    if ((double)(hm->size + 1) / hm->cap > LOAD_FACTOR_MAX) {
+        hm_resize(hm, hm->cap * 2);
+    }
+
     size_t h = hm->hash(k);
     bucket *b = get_bucket(hm, h);
 
@@ -56,7 +142,8 @@ void hm_set(hashmap *hm, void *k, void *v) {
 
     } else {
         bt_insert(b->impl, h, k, v, hm->cmp);
-        inserted = 1;
+        inserted = 1; 
+        // inserted = bt_insert(b->impl, h, k, v, hm->cmp);
     }
 
     if (inserted) {
@@ -144,6 +231,11 @@ void hm_del(hashmap *hm, void *k) {
 
     if (deleted) {
         hm->size--;
+    }
+
+    if (hm->cap > HASHMAP_MIN_CAP &&
+        (double)hm->size / hm->cap < LOAD_FACTOR_MIN) {
+        hm_resize(hm, hm->cap / 2);
     }
 }
 
