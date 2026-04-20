@@ -12,6 +12,9 @@ from ._native import (
     AVLSet as _AVLSet,
     BTreeSet as _BTreeSet,
     BTHashMap as _BTHashMap,
+    SwissTable as _SwissTable,
+    BSTSet as _BSTSet,
+    SkipListSet as _SkipListSet,
 )
 
 
@@ -48,6 +51,18 @@ class BTHashMap(_BTHashMap):
     """Hash map with B-tree buckets, implemented in C."""
     pass
 
+class SwissTable(_SwissTable):
+    """Swiss Table hash map (open addressing with control bytes), implemented in C."""
+    pass
 
-__all__ = ["SList", "DList", "HashMap", "RHMap", "RBSet", "AVLSet", "BTreeSet", "BTHashMap"]
+class BSTSet(_BSTSet):
+    """Sorted set based on an unbalanced binary search tree, implemented in C."""
+    pass
+ 
+ 
+class SkipListSet(_SkipListSet):
+    """Sorted set based on a skip list, implemented in C."""
+    pass
 
+
+__all__ = ["SList", "DList", "HashMap", "RHMap", "RBSet", "AVLSet", "BTreeSet", "BTHashMap", "SwissTable", "BSTSet", "SkipListSet"]
