@@ -4,9 +4,12 @@
 #include "hashmap_type.h"
 #include "rhmap_type.h"
 #include "bthashmap_type.h"
+#include "swisstable_type.h"
 #include "rbset_type.h"
 #include "bset_type.h"
 #include "avlset_type.h"
+#include "bstset_type.h"
+#include "skiplist_type.h"
 
 
 static PyModuleDef juniper_module = {
@@ -104,6 +107,36 @@ PyMODINIT_FUNC PyInit__native(void)
     Py_INCREF(&PyBTHashMapType);
     if (PyModule_AddObject(m, "BTHashMap", (PyObject *)&PyBTHashMapType) < 0) {
         Py_DECREF(&PyBTHashMapType);
+        Py_DECREF(m);
+        return NULL;
+    }
+
+    if (PyType_Ready(&PySwissTableType) < 0)
+        return NULL;
+ 
+    Py_INCREF(&PySwissTableType);
+    if (PyModule_AddObject(m, "SwissTable", (PyObject *)&PySwissTableType) < 0) {
+        Py_DECREF(&PySwissTableType);
+        Py_DECREF(m);
+        return NULL;
+    }
+
+    if (PyType_Ready(&PyBSTSetType) < 0)
+        return NULL;
+ 
+    Py_INCREF(&PyBSTSetType);
+    if (PyModule_AddObject(m, "BSTSet", (PyObject *)&PyBSTSetType) < 0) {
+        Py_DECREF(&PyBSTSetType);
+        Py_DECREF(m);
+        return NULL;
+    }
+ 
+    if (PyType_Ready(&PySkipListSetType) < 0)
+        return NULL;
+ 
+    Py_INCREF(&PySkipListSetType);
+    if (PyModule_AddObject(m, "SkipListSet", (PyObject *)&PySkipListSetType) < 0) {
+        Py_DECREF(&PySkipListSetType);
         Py_DECREF(m);
         return NULL;
     }
