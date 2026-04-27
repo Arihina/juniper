@@ -1,234 +1,248 @@
-==9478== Memcheck, a memory error detector
-==9478== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==9478== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==9478== Command: python3.11 examples/swisstable.py
-==9478== Parent PID: 8821
-==9478== 
-==9478== 
-==9478== HEAP SUMMARY:
-==9478==     in use at exit: 410,746 bytes in 16 blocks
-==9478==   total heap usage: 1,723 allocs, 1,707 frees, 48,086,202 bytes allocated
-==9478== 
-==9478== 96 bytes in 1 blocks are still reachable in loss record 1 of 15
-==9478==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x40162DC: calloc (rtld-malloc.h:44)
-==9478==    by 0x40162DC: _dl_check_map_versions (dl-version.c:273)
-==9478==    by 0x400ED13: dl_open_worker_begin (dl-open.c:600)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x400DF99: dl_open_worker (dl-open.c:782)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x400E34D: _dl_open (dl-open.c:883)
-==9478==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
-==9478==    by 0x4A2E12D: _dlerror_run (dlerror.c:138)
-==9478==    by 0x4A2E6C7: dlopen_implementation (dlopen.c:71)
-==9478==    by 0x4A2E6C7: dlopen@@GLIBC_2.34 (dlopen.c:81)
-==9478== 
-==9478== 98 bytes in 1 blocks are still reachable in loss record 2 of 15
-==9478==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x40271DF: malloc (rtld-malloc.h:56)
-==9478==    by 0x40271DF: strdup (strdup.c:42)
-==9478==    by 0x400A588: _dl_map_object (dl-load.c:2259)
-==9478==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x400DF99: dl_open_worker (dl-open.c:782)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x400E34D: _dl_open (dl-open.c:883)
-==9478==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
-==9478==    by 0x4A2E12D: _dlerror_run (dlerror.c:138)
-==9478== 
-==9478== 98 bytes in 1 blocks are still reachable in loss record 3 of 15
-==9478==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x400DD20: malloc (rtld-malloc.h:56)
-==9478==    by 0x400DD20: _dl_new_object (dl-object.c:199)
-==9478==    by 0x4008C82: _dl_map_object_from_fd (dl-load.c:1063)
-==9478==    by 0x400A600: _dl_map_object (dl-load.c:2327)
-==9478==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x400DF99: dl_open_worker (dl-open.c:782)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x400E34D: _dl_open (dl-open.c:883)
-==9478==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
-==9478== 
-==9478== 768 bytes in 1 blocks are still reachable in loss record 4 of 15
-==9478==    at 0x48487A9: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x4C921D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
-==9478==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
-==9478==    by 0x62554D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x6208E2: ??? (in /usr/bin/python3.11)
-==9478==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
-==9478==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
-==9478==    by 0x61EF40: ??? (in /usr/bin/python3.11)
-==9478==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
-==9478==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
-==9478== 
-==9478== 768 bytes in 1 blocks are still reachable in loss record 5 of 15
-==9478==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
-==9478==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
-==9478==    by 0x62950B: ??? (in /usr/bin/python3.11)
-==9478==    by 0x628BED: ??? (in /usr/bin/python3.11)
-==9478==    by 0x6208E2: ??? (in /usr/bin/python3.11)
-==9478==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
-==9478==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
-==9478==    by 0x61EF40: ??? (in /usr/bin/python3.11)
-==9478==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
-==9478==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
-==9478== 
-==9478== 768 bytes in 1 blocks are still reachable in loss record 6 of 15
-==9478==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4D4CA8: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4D0135: PyType_Ready (in /usr/bin/python3.11)
-==9478==    by 0x5234956: PyInit__native (module.c:31)
-==9478==    by 0x6530E8: ??? (in /usr/bin/python3.11)
-==9478==    by 0x52259B: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
-==9478==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
-==9478==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
-==9478==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
-==9478==    by 0x55A8D7: PyImport_ImportModuleLevelObject (in /usr/bin/python3.11)
-==9478== 
-==9478== 768 bytes in 1 blocks are still reachable in loss record 7 of 15
-==9478==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
-==9478==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
-==9478==    by 0x523498C: PyInit__native (module.c:41)
-==9478==    by 0x6530E8: ??? (in /usr/bin/python3.11)
-==9478==    by 0x52259B: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
-==9478==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
-==9478==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
-==9478==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
-==9478==    by 0x55A8D7: PyImport_ImportModuleLevelObject (in /usr/bin/python3.11)
-==9478== 
-==9478== 768 bytes in 1 blocks are still reachable in loss record 8 of 15
-==9478==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
-==9478==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
-==9478==    by 0x5234A42: PyInit__native (module.c:74)
-==9478==    by 0x6530E8: ??? (in /usr/bin/python3.11)
-==9478==    by 0x52259B: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
-==9478==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
-==9478==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
-==9478==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
-==9478==    by 0x55A8D7: PyImport_ImportModuleLevelObject (in /usr/bin/python3.11)
-==9478== 
-==9478== 768 bytes in 1 blocks are still reachable in loss record 9 of 15
-==9478==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
-==9478==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
-==9478==    by 0x5234AE4: PyInit__native (module.c:104)
-==9478==    by 0x6530E8: ??? (in /usr/bin/python3.11)
-==9478==    by 0x52259B: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
-==9478==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
-==9478==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
-==9478==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
-==9478==    by 0x55A8D7: PyImport_ImportModuleLevelObject (in /usr/bin/python3.11)
-==9478== 
-==9478== 768 bytes in 1 blocks are still reachable in loss record 10 of 15
-==9478==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
-==9478==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
-==9478==    by 0x5234B1A: PyInit__native (module.c:114)
-==9478==    by 0x6530E8: ??? (in /usr/bin/python3.11)
-==9478==    by 0x52259B: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
-==9478==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
-==9478==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
-==9478==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
-==9478==    by 0x55A8D7: PyImport_ImportModuleLevelObject (in /usr/bin/python3.11)
-==9478== 
-==9478== 1,290 bytes in 1 blocks are still reachable in loss record 11 of 15
-==9478==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x400DA02: calloc (rtld-malloc.h:44)
-==9478==    by 0x400DA02: _dl_new_object (dl-object.c:92)
-==9478==    by 0x4008C82: _dl_map_object_from_fd (dl-load.c:1063)
-==9478==    by 0x400A600: _dl_map_object (dl-load.c:2327)
-==9478==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x400DF99: dl_open_worker (dl-open.c:782)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x400E34D: _dl_open (dl-open.c:883)
-==9478==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
-==9478==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
-==9478==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
-==9478== 
-==9478== 1,332 bytes in 2 blocks are still reachable in loss record 12 of 15
-==9478==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x4C9927: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4D0115: PyType_Ready (in /usr/bin/python3.11)
-==9478==    by 0x541CD6: PyModule_AddType (in /usr/bin/python3.11)
-==9478==    by 0x5A976D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x52FBDE: PyModule_ExecDef (in /usr/bin/python3.11)
-==9478==    by 0x63A21F: ??? (in /usr/bin/python3.11)
-==9478==    by 0x519E13: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
-==9478==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
-==9478==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
-==9478==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
-==9478== 
-==9478== 9,240 bytes in 1 blocks are still reachable in loss record 13 of 15
-==9478==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4D4CA8: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4CF990: PyType_Ready (in /usr/bin/python3.11)
-==9478==    by 0x541CD6: PyModule_AddType (in /usr/bin/python3.11)
-==9478==    by 0x5A976D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x52FBDE: PyModule_ExecDef (in /usr/bin/python3.11)
-==9478==    by 0x63A21F: ??? (in /usr/bin/python3.11)
-==9478==    by 0x519E13: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
-==9478==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
-==9478==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
-==9478== 
-==9478== 131,072 bytes in 1 blocks are still reachable in loss record 14 of 15
-==9478==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x62941B: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4C9115: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
-==9478==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
-==9478==    by 0x62554D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x6208E2: ??? (in /usr/bin/python3.11)
-==9478==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
-==9478==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
-==9478==    by 0x61EF40: ??? (in /usr/bin/python3.11)
-==9478==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
-==9478==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
-==9478== 
-==9478== 262,144 bytes in 1 blocks are still reachable in loss record 15 of 15
-==9478==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==9478==    by 0x62939E: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4C9115: ??? (in /usr/bin/python3.11)
-==9478==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
-==9478==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
-==9478==    by 0x62554D: ??? (in /usr/bin/python3.11)
-==9478==    by 0x6208E2: ??? (in /usr/bin/python3.11)
-==9478==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
-==9478==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
-==9478==    by 0x61EF40: ??? (in /usr/bin/python3.11)
-==9478==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
-==9478==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
-==9478== 
-==9478== LEAK SUMMARY:
-==9478==    definitely lost: 0 bytes in 0 blocks
-==9478==    indirectly lost: 0 bytes in 0 blocks
-==9478==      possibly lost: 0 bytes in 0 blocks
-==9478==    still reachable: 410,746 bytes in 16 blocks
-==9478==         suppressed: 0 bytes in 0 blocks
-==9478== 
-==9478== For lists of detected and suppressed errors, rerun with: -s
-==9478== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==15313== Memcheck, a memory error detector
+==15313== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==15313== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==15313== Command: python3.11 examples/swisstable.py
+==15313== Parent PID: 14549
+==15313== 
+==15313== 
+==15313== HEAP SUMMARY:
+==15313==     in use at exit: 411,514 bytes in 17 blocks
+==15313==   total heap usage: 1,724 allocs, 1,707 frees, 48,086,970 bytes allocated
+==15313== 
+==15313== 96 bytes in 1 blocks are still reachable in loss record 1 of 16
+==15313==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x40162DC: calloc (rtld-malloc.h:44)
+==15313==    by 0x40162DC: _dl_check_map_versions (dl-version.c:273)
+==15313==    by 0x400ED13: dl_open_worker_begin (dl-open.c:600)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x400DF99: dl_open_worker (dl-open.c:782)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x400E34D: _dl_open (dl-open.c:883)
+==15313==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
+==15313==    by 0x4A2E12D: _dlerror_run (dlerror.c:138)
+==15313==    by 0x4A2E6C7: dlopen_implementation (dlopen.c:71)
+==15313==    by 0x4A2E6C7: dlopen@@GLIBC_2.34 (dlopen.c:81)
+==15313== 
+==15313== 98 bytes in 1 blocks are still reachable in loss record 2 of 16
+==15313==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x40271DF: malloc (rtld-malloc.h:56)
+==15313==    by 0x40271DF: strdup (strdup.c:42)
+==15313==    by 0x400A588: _dl_map_object (dl-load.c:2259)
+==15313==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x400DF99: dl_open_worker (dl-open.c:782)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x400E34D: _dl_open (dl-open.c:883)
+==15313==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
+==15313==    by 0x4A2E12D: _dlerror_run (dlerror.c:138)
+==15313== 
+==15313== 98 bytes in 1 blocks are still reachable in loss record 3 of 16
+==15313==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x400DD20: malloc (rtld-malloc.h:56)
+==15313==    by 0x400DD20: _dl_new_object (dl-object.c:199)
+==15313==    by 0x4008C82: _dl_map_object_from_fd (dl-load.c:1063)
+==15313==    by 0x400A600: _dl_map_object (dl-load.c:2327)
+==15313==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x400DF99: dl_open_worker (dl-open.c:782)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x400E34D: _dl_open (dl-open.c:883)
+==15313==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
+==15313== 
+==15313== 768 bytes in 1 blocks are still reachable in loss record 4 of 16
+==15313==    at 0x48487A9: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x4C921D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
+==15313==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
+==15313==    by 0x62554D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x6208E2: ??? (in /usr/bin/python3.11)
+==15313==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
+==15313==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
+==15313==    by 0x61EF40: ??? (in /usr/bin/python3.11)
+==15313==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
+==15313==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
+==15313== 
+==15313== 768 bytes in 1 blocks are still reachable in loss record 5 of 16
+==15313==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
+==15313==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
+==15313==    by 0x62950B: ??? (in /usr/bin/python3.11)
+==15313==    by 0x628BED: ??? (in /usr/bin/python3.11)
+==15313==    by 0x6208E2: ??? (in /usr/bin/python3.11)
+==15313==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
+==15313==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
+==15313==    by 0x61EF40: ??? (in /usr/bin/python3.11)
+==15313==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
+==15313==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
+==15313== 
+==15313== 768 bytes in 1 blocks are still reachable in loss record 6 of 16
+==15313==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
+==15313==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
+==15313==    by 0x5234B36: PyInit__native (module.c:31)
+==15313==    by 0x6530E8: ??? (in /usr/bin/python3.11)
+==15313==    by 0x52259B: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
+==15313==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
+==15313==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
+==15313==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
+==15313==    by 0x55A8D7: PyImport_ImportModuleLevelObject (in /usr/bin/python3.11)
+==15313== 
+==15313== 768 bytes in 1 blocks are still reachable in loss record 7 of 16
+==15313==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
+==15313==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
+==15313==    by 0x5234B6C: PyInit__native (module.c:41)
+==15313==    by 0x6530E8: ??? (in /usr/bin/python3.11)
+==15313==    by 0x52259B: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
+==15313==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
+==15313==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
+==15313==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
+==15313==    by 0x55A8D7: PyImport_ImportModuleLevelObject (in /usr/bin/python3.11)
+==15313== 
+==15313== 768 bytes in 1 blocks are still reachable in loss record 8 of 16
+==15313==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
+==15313==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
+==15313==    by 0x5234C22: PyInit__native (module.c:74)
+==15313==    by 0x6530E8: ??? (in /usr/bin/python3.11)
+==15313==    by 0x52259B: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
+==15313==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
+==15313==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
+==15313==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
+==15313==    by 0x55A8D7: PyImport_ImportModuleLevelObject (in /usr/bin/python3.11)
+==15313== 
+==15313== 768 bytes in 1 blocks are still reachable in loss record 9 of 16
+==15313==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
+==15313==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
+==15313==    by 0x5234CC4: PyInit__native (module.c:104)
+==15313==    by 0x6530E8: ??? (in /usr/bin/python3.11)
+==15313==    by 0x52259B: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
+==15313==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
+==15313==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
+==15313==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
+==15313==    by 0x55A8D7: PyImport_ImportModuleLevelObject (in /usr/bin/python3.11)
+==15313== 
+==15313== 768 bytes in 1 blocks are still reachable in loss record 10 of 16
+==15313==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4CBB48: PyDict_SetDefault (in /usr/bin/python3.11)
+==15313==    by 0x4CFB0D: PyType_Ready (in /usr/bin/python3.11)
+==15313==    by 0x5234CFA: PyInit__native (module.c:114)
+==15313==    by 0x6530E8: ??? (in /usr/bin/python3.11)
+==15313==    by 0x52259B: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
+==15313==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
+==15313==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
+==15313==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
+==15313==    by 0x55A8D7: PyImport_ImportModuleLevelObject (in /usr/bin/python3.11)
+==15313== 
+==15313== 768 bytes in 1 blocks are still reachable in loss record 11 of 16
+==15313==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4D4CA8: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4D0135: PyType_Ready (in /usr/bin/python3.11)
+==15313==    by 0x5234D5A: PyInit__native (module.c:134)
+==15313==    by 0x6530E8: ??? (in /usr/bin/python3.11)
+==15313==    by 0x52259B: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
+==15313==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
+==15313==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
+==15313==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
+==15313==    by 0x55A8D7: PyImport_ImportModuleLevelObject (in /usr/bin/python3.11)
+==15313== 
+==15313== 1,290 bytes in 1 blocks are still reachable in loss record 12 of 16
+==15313==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x400DA02: calloc (rtld-malloc.h:44)
+==15313==    by 0x400DA02: _dl_new_object (dl-object.c:92)
+==15313==    by 0x4008C82: _dl_map_object_from_fd (dl-load.c:1063)
+==15313==    by 0x400A600: _dl_map_object (dl-load.c:2327)
+==15313==    by 0x400E9A8: dl_open_worker_begin (dl-open.c:534)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x400DF99: dl_open_worker (dl-open.c:782)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x400E34D: _dl_open (dl-open.c:883)
+==15313==    by 0x4A2E63B: dlopen_doit (dlopen.c:56)
+==15313==    by 0x4B12B47: _dl_catch_exception (dl-error-skeleton.c:208)
+==15313==    by 0x4B12C12: _dl_catch_error (dl-error-skeleton.c:227)
+==15313== 
+==15313== 1,332 bytes in 2 blocks are still reachable in loss record 13 of 16
+==15313==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x4C9927: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4D0115: PyType_Ready (in /usr/bin/python3.11)
+==15313==    by 0x541CD6: PyModule_AddType (in /usr/bin/python3.11)
+==15313==    by 0x5A976D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x52FBDE: PyModule_ExecDef (in /usr/bin/python3.11)
+==15313==    by 0x63A21F: ??? (in /usr/bin/python3.11)
+==15313==    by 0x519E13: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
+==15313==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
+==15313==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
+==15313==    by 0x55BFB0: PyObject_CallMethodObjArgs (in /usr/bin/python3.11)
+==15313== 
+==15313== 9,240 bytes in 1 blocks are still reachable in loss record 14 of 16
+==15313==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x4CDF9D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4D4CA8: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4CF990: PyType_Ready (in /usr/bin/python3.11)
+==15313==    by 0x541CD6: PyModule_AddType (in /usr/bin/python3.11)
+==15313==    by 0x5A976D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x52FBDE: PyModule_ExecDef (in /usr/bin/python3.11)
+==15313==    by 0x63A21F: ??? (in /usr/bin/python3.11)
+==15313==    by 0x519E13: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4FEFE0: _PyEval_EvalFrameDefault (in /usr/bin/python3.11)
+==15313==    by 0x531822: _PyFunction_Vectorcall (in /usr/bin/python3.11)
+==15313==    by 0x51A2AD: ??? (in /usr/bin/python3.11)
+==15313== 
+==15313== 131,072 bytes in 1 blocks are still reachable in loss record 15 of 16
+==15313==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x62941B: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4C9115: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
+==15313==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
+==15313==    by 0x62554D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x6208E2: ??? (in /usr/bin/python3.11)
+==15313==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
+==15313==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
+==15313==    by 0x61EF40: ??? (in /usr/bin/python3.11)
+==15313==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
+==15313==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
+==15313== 
+==15313== 262,144 bytes in 1 blocks are still reachable in loss record 16 of 16
+==15313==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==15313==    by 0x62939E: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4C9115: ??? (in /usr/bin/python3.11)
+==15313==    by 0x4C8BB5: _PyObject_GC_New (in /usr/bin/python3.11)
+==15313==    by 0x4C8A19: PyList_New (in /usr/bin/python3.11)
+==15313==    by 0x62554D: ??? (in /usr/bin/python3.11)
+==15313==    by 0x6208E2: ??? (in /usr/bin/python3.11)
+==15313==    by 0x6205CD: Py_InitializeFromConfig (in /usr/bin/python3.11)
+==15313==    by 0x61F1A9: ??? (in /usr/bin/python3.11)
+==15313==    by 0x61EF40: ??? (in /usr/bin/python3.11)
+==15313==    by 0x61EE0C: Py_BytesMain (in /usr/bin/python3.11)
+==15313==    by 0x49C7D8F: (below main) (libc_start_call_main.h:58)
+==15313== 
+==15313== LEAK SUMMARY:
+==15313==    definitely lost: 0 bytes in 0 blocks
+==15313==    indirectly lost: 0 bytes in 0 blocks
+==15313==      possibly lost: 0 bytes in 0 blocks
+==15313==    still reachable: 411,514 bytes in 17 blocks
+==15313==         suppressed: 0 bytes in 0 blocks
+==15313== 
+==15313== For lists of detected and suppressed errors, rerun with: -s
+==15313== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
