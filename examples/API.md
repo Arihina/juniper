@@ -8,6 +8,7 @@
 | `clear` | `()` | Remove all elements. |
 | `index` | `()` | Return index of first occurrence; raise ValueError if missing. |
 | `insert` | `()` | Insert an element at the given index. |
+| `is_empty` | `()` | Return True if list is empty. |
 | `pop_back` | `()` | Remove and return the last element. |
 | `pop_front` | `()` | Remove and return the first element. |
 | `push_back` | `()` | Add an element to the back. |
@@ -22,6 +23,8 @@
 | `clear` | `()` | Remove all elements. |
 | `index` | `()` | Return index of first occurrence; raise ValueError if missing. |
 | `insert` | `()` | Insert an element at the given index. |
+| `is_empty` | `()` | Return True if list is empty. |
+| `move_to_front` | `()` | Move element at given index to the front in O(1). |
 | `pop_back` | `()` | Remove and return the last element. |
 | `pop_front` | `()` | Remove and return the first element. |
 | `push_back` | `()` | Add an element to the back. |
@@ -136,5 +139,7 @@
 | `contains` | `()` | Return True if element is in the set. |
 | `discard` | `()` | Remove an element if present (no error if missing). |
 | `height` | `()` | Return the current max level of the skip list. |
+| `is_empty` | `()` | Return True if set is empty. |
+| `peek_min` | `()` | Return the smallest element without removing it. |
 | `pop` | `()` | Remove and return the smallest element. |
 | `remove` | `()` | Remove an element; raise KeyError if missing. |
