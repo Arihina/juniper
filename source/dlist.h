@@ -34,5 +34,9 @@ Py_ssize_t dlist_index(DList *list, PyObject *value);
 
 void dlist_clear(DList *list);
 void dlist_reverse(DList *list);
+void dlist_move_to_front(DList *list, DListNode *node);
+
+static inline int dlist_is_empty(DList *list) { return list->size == 0; }
+static inline size_t dlist_len(DList *list) { return list->size; }
 
 #endif

@@ -295,6 +295,46 @@ static PyObject *PyDList_reversed(PyDListObject *self,
     return (PyObject *)it;
 }
 
+static PyObject *PyDList_move_to_front(PyDListObject *self, PyObject *args)
+{
+    Py_ssize_t index;
+    if (!PyArg_ParseTuple(args, "n", &index)) return NULL;
+
+    Py_ssize_t sz = (Py_ssize_t)self->list->size;
+    if (index < 0) index += sz;
+    if (index < 0 || index >= sz) {
+        PyErr_SetString(PyExc_IndexError, "DList index out of range");
+        return NULL;
+    }
+
+    /* Find the node at index */
+    DListNode *node;
+    if ((size_t)index <= self->list->size / 2) {
+        node = self->list->head;
+        for (Py_ssize_t i = 0; i < index; i++)
+            node = node->next;
+    } else {
+        node = self->list->tail;
+        for (Py_ssize_t i = sz - 1; i > index; i--)
+            node = node->prev;
+    }
+
+    dlist_move_to_front(self->list, node);
+    Py_RETURN_NONE;
+}
+
+static PyObject *PyDList_is_empty(PyDListObject *self,
+                                  PyObject *Py_UNUSED(ignored))
+{
+    return PyBool_FromLong(dlist_is_empty(self->list));
+}
+
+static PyObject *PyDList__len(PyDListObject *self,
+                              PyObject *Py_UNUSED(ignored))
+{
+    return PyLong_FromSize_t(dlist_len(self->list));
+}
+
 static PyMethodDef PyDList_methods[] = {
     {"push_front", (PyCFunction)PyDList_push_front, METH_VARARGS,
      "Add an element to the front."},
@@ -316,6 +356,12 @@ static PyMethodDef PyDList_methods[] = {
      "Reverse the list in-place."},
     {"__reversed__", (PyCFunction)PyDList_reversed, METH_NOARGS,
      "Return a reverse iterator."},
+    {"move_to_front", (PyCFunction)PyDList_move_to_front, METH_VARARGS,
+     "Move element at given index to the front in O(1)."},
+    {"is_empty", (PyCFunction)PyDList_is_empty, METH_NOARGS,
+     "Return True if list is empty."},
+    {"_len",     (PyCFunction)PyDList__len, METH_NOARGS,
+     "Return number of elements (method form of len())."},
     {NULL}
 };
 

@@ -29,6 +29,11 @@ int skiplist_contains(SkipList *list, PyObject *key);
 SkipNode *skiplist_first(SkipList *list);
 SkipNode *skiplist_next(SkipNode *node);
 
+PyObject *skiplist_peek_min(SkipList *list);
+
 int skiplist_height(SkipList *list);
+
+static inline int skiplist_is_empty(SkipList *list) { return list->size == 0; }
+static inline size_t skiplist_len(SkipList *list) { return list->size; }
 
 #endif

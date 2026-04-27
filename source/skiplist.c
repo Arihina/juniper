@@ -175,6 +175,14 @@ SkipNode *skiplist_next(SkipNode *node)
     return node ? node->forward[0] : NULL;
 }
 
+PyObject *skiplist_peek_min(SkipList *list)
+{
+    SkipNode *first = list->header->forward[0];
+    if (!first) return NULL;
+    Py_INCREF(first->key);
+    return first->key;
+}
+
 int skiplist_height(SkipList *list)
 {
     return list->level;

@@ -235,3 +235,21 @@ void dlist_reverse(DList *list)
     list->head = list->tail;
     list->tail = tmp;
 }
+
+void dlist_move_to_front(DList *list, DListNode *node)
+{
+    if (!node || node == list->head || list->size <= 1)
+        return;
+
+    if (node->prev)
+        node->prev->next = node->next;
+    if (node->next)
+        node->next->prev = node->prev;
+    else
+        list->tail = node->prev;
+
+    node->prev = NULL;
+    node->next = list->head;
+    list->head->prev = node;
+    list->head = node;
+}

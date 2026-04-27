@@ -235,6 +235,18 @@ static PyObject *PySList_reverse(PySListObject *self,
     Py_RETURN_NONE;
 }
 
+static PyObject *PySList_is_empty(PySListObject *self,
+                                  PyObject *Py_UNUSED(ignored))
+{
+    return PyBool_FromLong(slist_is_empty(self->list));
+}
+
+static PyObject *PySList__len(PySListObject *self,
+                              PyObject *Py_UNUSED(ignored))
+{
+    return PyLong_FromSize_t(slist_len(self->list));
+}
+
 static PyMethodDef PySList_methods[] = {
     {"push_front", (PyCFunction)PySList_push_front, METH_VARARGS,
      "Add an element to the front."},
@@ -254,6 +266,10 @@ static PyMethodDef PySList_methods[] = {
      "Remove all elements."},
     {"reverse",    (PyCFunction)PySList_reverse,    METH_NOARGS,
      "Reverse the list in-place."},
+    {"is_empty",   (PyCFunction)PySList_is_empty,   METH_NOARGS,
+     "Return True if list is empty."},
+    {"_len",       (PyCFunction)PySList__len,       METH_NOARGS,
+     "Return number of elements (method form of len())."},
     {NULL}
 };
 

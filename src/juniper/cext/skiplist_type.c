@@ -166,6 +166,29 @@ static PyObject *PySkipListSet_height(PySkipListSetObject *self,
     return PyLong_FromLong(skiplist_height(self->list));
 }
 
+static PyObject *PySkipListSet_peek_min(PySkipListSetObject *self,
+                                        PyObject *Py_UNUSED(ignored))
+{
+    PyObject *val = skiplist_peek_min(self->list);
+    if (!val) {
+        PyErr_SetString(PyExc_KeyError, "peek_min on empty SkipListSet");
+        return NULL;
+    }
+    return val;
+}
+
+static PyObject *PySkipListSet_is_empty(PySkipListSetObject *self,
+                                        PyObject *Py_UNUSED(ignored))
+{
+    return PyBool_FromLong(skiplist_is_empty(self->list));
+}
+
+static PyObject *PySkipListSet__len(PySkipListSetObject *self,
+                                    PyObject *Py_UNUSED(ignored))
+{
+    return PyLong_FromSize_t(skiplist_len(self->list));
+}
+
 static PyMethodDef PySkipListSet_methods[] = {
     {"add",      (PyCFunction)PySkipListSet_add,      METH_VARARGS,
      "Add an element to the set."},
@@ -179,8 +202,14 @@ static PyMethodDef PySkipListSet_methods[] = {
      "Remove all elements."},
     {"pop",      (PyCFunction)PySkipListSet_pop,       METH_NOARGS,
      "Remove and return the smallest element."},
+    {"peek_min", (PyCFunction)PySkipListSet_peek_min,  METH_NOARGS,
+     "Return the smallest element without removing it."},
     {"height",   (PyCFunction)PySkipListSet_height,    METH_NOARGS,
      "Return the current max level of the skip list."},
+    {"is_empty", (PyCFunction)PySkipListSet_is_empty,  METH_NOARGS,
+     "Return True if set is empty."},
+    {"_len",     (PyCFunction)PySkipListSet__len,      METH_NOARGS,
+     "Return number of elements (method form of len())."},
     {NULL}
 };
 

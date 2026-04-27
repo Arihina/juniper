@@ -34,4 +34,7 @@ Py_ssize_t slist_index(SList *list, PyObject *value);
 void slist_clear(SList *list);
 void slist_reverse(SList *list);
 
+static inline int slist_is_empty(SList *list) { return list->size == 0; }
+static inline size_t slist_len(SList *list) { return list->size; }
+
 #endif
