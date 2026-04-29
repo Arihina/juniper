@@ -5,6 +5,8 @@ pip install -e .
 chmod +x run_valgrind.sh
 ./run_valgrind.sh
 
+PYTHONMALLOC=malloc python3.11 memory_runner.py
+
 pip uninstall juniper -y
 pip install -e . --force-reinstall
 
