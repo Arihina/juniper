@@ -1,19 +1,15 @@
 #pragma once
 #include "hashmap.h"
-#include "bucket_list.h"
-#include "bucket_tree.h"
+#include "bucket.h"
 
-typedef struct {
+typedef struct
+{
     hashmap *hm;
     size_t bucket_index;
-
-    list_node *lnode;
-
-    rb_node *stack[64];
-    int sp;
-
-    int bucket_started;
+    hm_node *cur;
+    unsigned long version;
 } hm_iter;
 
 void hm_iter_init(hm_iter *it, hashmap *hm);
-void *hm_iter_next(hm_iter *it);
+
+int hm_iter_next(hm_iter *it, void **out_key, void **out_val);

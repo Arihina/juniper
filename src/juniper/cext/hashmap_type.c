@@ -1,204 +1,262 @@
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <string.h>
 #include "hashmap/hashmap.h"
 #include "hashmap/hashmap_iter.h"
 
-typedef struct {
-    PyObject_HEAD
-    hashmap *hm;
+typedef struct
+{
+    PyObject_HEAD hashmap *hm;
 } PyHashMap;
-
-typedef enum {
+typedef enum
+{
     HM_ITER_KEYS,
     HM_ITER_VALUES,
     HM_ITER_ITEMS
 } hm_iter_mode;
-
-typedef struct {
+typedef struct
+{
     PyObject_HEAD
-    hm_iter it;
-    hashmap *hm;
+        hm_iter it;
+    PyHashMap *map;
     hm_iter_mode mode;
 } PyHMIter;
 
-static size_t py_hash(void *o) {
-    return PyObject_Hash((PyObject*)o);
+static __thread int hm_callback_error = 0;
+
+static size_t py_hash(void *o)
+{
+    Py_hash_t h = PyObject_Hash((PyObject *)o);
+    if (h == -1 && PyErr_Occurred())
+    {
+        hm_callback_error = 1;
+        return 0;
+    }
+    return (size_t)h;
 }
-
-static int py_cmp(void *a, void *b) {
-    return PyObject_RichCompareBool(a, b, Py_EQ) == 1 ? 0 : 1;
+static int py_cmp(void *a, void *b)
+{
+    int r = PyObject_RichCompareBool((PyObject *)a, (PyObject *)b, Py_EQ);
+    if (r < 0)
+    {
+        hm_callback_error = 1;
+        return -1;
+    }
+    return r == 1 ? 0 : 1;
 }
+#define BEGIN_CB() (hm_callback_error = 0)
+#define CB_FAILED() (hm_callback_error)
 
-static PyObject* hm_new_py(PyTypeObject *t, PyObject *a, PyObject *k) {
-    PyHashMap *self = (PyHashMap*)t->tp_alloc(t, 0);
-    if (!self) return NULL;
-
+static PyObject *hm_new_py(PyTypeObject *t, PyObject *a, PyObject *k)
+{
+    PyHashMap *self = (PyHashMap *)t->tp_alloc(t, 0);
+    if (!self)
+        return NULL;
     self->hm = hm_new(16, py_hash, py_cmp);
-    return (PyObject*)self;
+    if (!self->hm)
+    {
+        Py_DECREF(self);
+        return PyErr_NoMemory();
+    }
+    return (PyObject *)self;
 }
 
-static Py_ssize_t hm_len_py(PyHashMap *self) {
-    return hm_len(self->hm);
+static int hm_traverse(PyHashMap *self, visitproc visit, void *arg)
+{
+    if (!self->hm)
+        return 0;
+    hm_iter it;
+    hm_iter_init(&it, self->hm);
+    void *k, *v;
+    while (hm_iter_next(&it, &k, &v) == 1)
+    {
+        Py_VISIT((PyObject *)k);
+        Py_VISIT((PyObject *)v);
+    }
+    return 0;
+}
+static int hm_clear(PyHashMap *self)
+{
+    if (!self->hm)
+        return 0;
+    hm_iter it;
+    hm_iter_init(&it, self->hm);
+    void *k, *v;
+    while (hm_iter_next(&it, &k, &v) == 1)
+    {
+        Py_DECREF((PyObject *)k);
+        Py_DECREF((PyObject *)v);
+    }
+    hm_free(self->hm);
+    self->hm = NULL;
+    return 0;
+}
+static void hm_dealloc(PyHashMap *self)
+{
+    PyObject_GC_UnTrack(self);
+    hm_clear(self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
-static PyObject* hm_get_py(PyHashMap *self, PyObject *key) {
-    void *v = hm_get(self->hm, key);
-    if (!v) {
+static Py_ssize_t hm_len_py(PyHashMap *self) { return (Py_ssize_t)hm_len(self->hm); }
+
+static PyObject *hm_get_py(PyHashMap *self, PyObject *key)
+{
+    void *v = NULL;
+    BEGIN_CB();
+    int r = hm_get_ex(self->hm, key, &v);
+    if (CB_FAILED())
+        return NULL;
+    if (r == 0)
+    {
         PyErr_SetObject(PyExc_KeyError, key);
         return NULL;
     }
-
-    Py_INCREF((PyObject*)v);
-    return (PyObject*)v;
+    Py_INCREF((PyObject *)v);
+    return (PyObject *)v;
 }
 
-static int hm_ass_subscript(PyHashMap *self, PyObject *key, PyObject *val) {
-    if (val == NULL) {
-        void *old = hm_get(self->hm, key);
-
-        if (!old) {
+static int hm_ass_subscript(PyHashMap *self, PyObject *key, PyObject *val)
+{
+    if (val == NULL)
+    {
+        void *ok = NULL, *ov = NULL;
+        BEGIN_CB();
+        int r = hm_del_ex(self->hm, key, &ok, &ov);
+        if (CB_FAILED())
+            return -1;
+        if (r == 0)
+        {
             PyErr_SetObject(PyExc_KeyError, key);
             return -1;
         }
-        Py_DECREF((PyObject*)old);
-
-        hm_del(self->hm, key);
+        Py_DECREF((PyObject *)ok);
+        Py_DECREF((PyObject *)ov);
         return 0;
     }
-
-    void *old = hm_get(self->hm, key);
-
-    if (old) {
-        Py_DECREF((PyObject*)old);
-        Py_INCREF(val);
-
-        hm_set(self->hm, key, val);
-    } else {
-        Py_INCREF(key);
-        Py_INCREF(val);
-
-        hm_set(self->hm, key, val);
+    Py_INCREF(key);
+    Py_INCREF(val);
+    BEGIN_CB();
+    void *res = hm_set(self->hm, key, val);
+    if (CB_FAILED() || res == HM_ERROR)
+    {
+        Py_DECREF(key);
+        Py_DECREF(val);
+        if (!PyErr_Occurred())
+            PyErr_NoMemory();
+        return -1;
     }
+    if (res == HM_NEW_KEY)
+        return 0;
 
+    Py_DECREF(key);
+    Py_DECREF((PyObject *)res);
     return 0;
 }
 
-static PyObject* PyHMIter_iter(PyObject *self) {
+static PyObject *PyHMIter_iter(PyObject *self)
+{
     Py_INCREF(self);
     return self;
 }
-
-static PyObject* PyHMIter_next(PyHMIter *self) {
-    void *k = hm_iter_next(&self->it);
-
-    if (!k) {
-        PyErr_SetNone(PyExc_StopIteration);
+static PyObject *PyHMIter_next(PyHMIter *self)
+{
+    void *k = NULL, *v = NULL;
+    int r = hm_iter_next(&self->it, &k, &v);
+    if (r == -1)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "HashMap changed size during iteration");
         return NULL;
     }
-
-    void *v = hm_get(self->hm, k);
-    if (!v) {
-        PyErr_SetString(PyExc_RuntimeError, "HashMap corrupted");
+    if (r == 0)
         return NULL;
-    }
-
-    PyObject *key = (PyObject*)k;
-    PyObject *val = (PyObject*)v;
-
-    if (self->mode == HM_ITER_KEYS) {
+    PyObject *key = (PyObject *)k, *val = (PyObject *)v;
+    if (self->mode == HM_ITER_KEYS)
+    {
         Py_INCREF(key);
         return key;
     }
-
-    if (self->mode == HM_ITER_VALUES) {
+    if (self->mode == HM_ITER_VALUES)
+    {
         Py_INCREF(val);
         return val;
     }
-
+    PyObject *t = PyTuple_New(2);
+    if (!t)
+        return NULL;
     Py_INCREF(key);
+    PyTuple_SET_ITEM(t, 0, key);
     Py_INCREF(val);
-
-    return PyTuple_Pack(2, key, val);
+    PyTuple_SET_ITEM(t, 1, val);
+    return t;
+}
+static int PyHMIter_traverse(PyHMIter *self, visitproc visit, void *arg)
+{
+    Py_VISIT(self->map);
+    return 0;
+}
+static int PyHMIter_clear(PyHMIter *self)
+{
+    Py_CLEAR(self->map);
+    return 0;
+}
+static void PyHMIter_dealloc(PyHMIter *self)
+{
+    PyObject_GC_UnTrack(self);
+    PyHMIter_clear(self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 PyTypeObject PyHMIterType = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "juniper.HashMapIterator",
+        .tp_name = "juniper.HashMapIterator",
     .tp_basicsize = sizeof(PyHMIter),
-    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC,
+    .tp_dealloc = (destructor)PyHMIter_dealloc,
+    .tp_traverse = (traverseproc)PyHMIter_traverse,
+    .tp_clear = (inquiry)PyHMIter_clear,
     .tp_iter = PyHMIter_iter,
     .tp_iternext = (iternextfunc)PyHMIter_next,
 };
 
-static PyObject* hm_make_iter(PyHashMap *self, hm_iter_mode mode) {
-    PyHMIter *it = PyObject_New(PyHMIter, &PyHMIterType);
-    if (!it) return NULL;
-
-    memset(&it->it, 0, sizeof(hm_iter));
+static PyObject *hm_make_iter(PyHashMap *self, hm_iter_mode mode)
+{
+    PyHMIter *it = PyObject_GC_New(PyHMIter, &PyHMIterType);
+    if (!it)
+        return NULL;
     hm_iter_init(&it->it, self->hm);
-
-    it->hm = self->hm;
+    Py_INCREF(self);
+    it->map = self;
     it->mode = mode;
-
-    return (PyObject*)it;
+    PyObject_GC_Track(it);
+    return (PyObject *)it;
 }
-
-static PyObject* hm_iter_py(PyHashMap *self) {
-    return hm_make_iter(self, HM_ITER_KEYS);
-}
-
-static PyObject* hm_keys(PyHashMap *self, PyObject *Py_UNUSED(ignored)) {
-    return hm_make_iter(self, HM_ITER_KEYS);
-}
-
-static PyObject* hm_values(PyHashMap *self, PyObject *Py_UNUSED(ignored)) {
-    return hm_make_iter(self, HM_ITER_VALUES);
-}
-
-static PyObject* hm_items(PyHashMap *self, PyObject *Py_UNUSED(ignored)) {
-    return hm_make_iter(self, HM_ITER_ITEMS);
-}
-
-static void hm_dealloc(PyHashMap *self) {
-    hm_iter it;
-    hm_iter_init(&it, self->hm);
-
-    void *k;
-    while ((k = hm_iter_next(&it))) {
-        void *v = hm_get(self->hm, k);
-
-        Py_DECREF((PyObject*)k);
-        if (v) {
-            Py_DECREF((PyObject*)v);
-        }
-    }
-    
-    hm_free(self->hm);
-
-    Py_TYPE(self)->tp_free((PyObject*)self);
-}
+static PyObject *hm_iter_py(PyHashMap *self) { return hm_make_iter(self, HM_ITER_KEYS); }
+static PyObject *hm_keys(PyHashMap *self, PyObject *u) { return hm_make_iter(self, HM_ITER_KEYS); }
+static PyObject *hm_values(PyHashMap *self, PyObject *u) { return hm_make_iter(self, HM_ITER_VALUES); }
+static PyObject *hm_items(PyHashMap *self, PyObject *u) { return hm_make_iter(self, HM_ITER_ITEMS); }
 
 static PyMethodDef hashmap_methods[] = {
-    {"keys", (PyCFunction)hm_keys, METH_NOARGS, "Return keys iterator"},
-    {"values", (PyCFunction)hm_values, METH_NOARGS, "Return values iterator"},
-    {"items", (PyCFunction)hm_items, METH_NOARGS, "Return items iterator"},
-    {NULL}
-};
-
-static PyMappingMethods map = {
+    {"keys", (PyCFunction)hm_keys, METH_NOARGS, NULL},
+    {"values", (PyCFunction)hm_values, METH_NOARGS, NULL},
+    {"items", (PyCFunction)hm_items, METH_NOARGS, NULL},
+    {NULL}};
+static PyMappingMethods map_methods = {
     (lenfunc)hm_len_py,
     (binaryfunc)hm_get_py,
-    (objobjargproc)hm_ass_subscript
+    (objobjargproc)hm_ass_subscript,
 };
 
 PyTypeObject HashMapType = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "juniper.HashMap",
+        .tp_name = "juniper.HashMap",
     .tp_basicsize = sizeof(PyHashMap),
-    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_HAVE_GC,
     .tp_new = hm_new_py,
     .tp_dealloc = (destructor)hm_dealloc,
-    .tp_as_mapping = &map,
+    .tp_traverse = (traverseproc)hm_traverse,
+    .tp_clear = (inquiry)hm_clear,
+    .tp_as_mapping = &map_methods,
     .tp_iter = (getiterfunc)hm_iter_py,
-    .tp_methods = hashmap_methods
+    .tp_methods = hashmap_methods,
 };

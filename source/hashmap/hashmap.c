@@ -1,242 +1,206 @@
 #include "hashmap_internal.h"
-#include "bucket_list.h"
-#include "bucket_tree.h"
 #include <stdlib.h>
 
 #define TREEIFY_THRESHOLD 8
 #define UNTREEIFY_THRESHOLD 6
+#define MIN_TREEIFY_CAPACITY 64
 #define LOAD_FACTOR_MAX 0.75
-#define LOAD_FACTOR_MIN 0.25
-#define HASHMAP_MIN_CAP 8
+#define LOAD_FACTOR_MIN 0.10
+#define HASHMAP_MIN_CAP 16
 
+static char hm_new_key_marker;
+static char hm_error_marker;
+void *const HM_NEW_KEY = &hm_new_key_marker;
+void *const HM_ERROR = &hm_error_marker;
 
-static bucket *get_bucket(hashmap *hm,size_t h){
-    size_t i=h%hm->cap;
-    if(!hm->buckets[i]){
-        bucket*b=calloc(1,sizeof(bucket));
-        b->k=LIST; b->impl=bl_new();
-        hm->buckets[i]=b;
+static size_t round_up_pow2(size_t x)
+{
+    size_t p = HASHMAP_MIN_CAP;
+    while (p < x)
+        p <<= 1;
+    return p;
+}
+
+hashmap *hm_new(size_t cap, hash_fn h, cmp_fn c)
+{
+    hashmap *hm = calloc(1, sizeof(hashmap));
+    if (!hm)
+        return NULL;
+    hm->cap = round_up_pow2(cap < HASHMAP_MIN_CAP ? HASHMAP_MIN_CAP : cap);
+    hm->hash = h;
+    hm->cmp = c;
+    hm->buckets = calloc(hm->cap, sizeof(bucket *));
+    if (!hm->buckets)
+    {
+        free(hm);
+        return NULL;
+    }
+    return hm;
+}
+
+static bucket *bucket_at(hashmap *hm, size_t h, int create)
+{
+    size_t i = h & (hm->cap - 1);
+    if (!hm->buckets[i] && create)
+    {
+        hm->buckets[i] = bucket_new();
     }
     return hm->buckets[i];
 }
 
-hashmap *hm_new(size_t cap,hash_fn h,cmp_fn c){
-    hashmap*hm=calloc(1,sizeof(hashmap));
-    hm->cap=cap; hm->hash=h; hm->cmp=c;
-    hm->buckets=calloc(cap,sizeof(bucket*));
-    return hm;
-}
+static int hm_resize(hashmap *hm, size_t new_cap)
+{
+    new_cap = round_up_pow2(new_cap);
+    bucket **new_buckets = calloc(new_cap, sizeof(bucket *));
+    if (!new_buckets)
+        return -1;
 
-static void hm_resize(hashmap *hm, size_t new_cap) {
-    if (new_cap < HASHMAP_MIN_CAP)
-        new_cap = HASHMAP_MIN_CAP;
-
-    bucket **old_buckets = hm->buckets;
+    bucket **old = hm->buckets;
     size_t old_cap = hm->cap;
 
-    hm->buckets = calloc(new_cap, sizeof(bucket*));
+    for (size_t i = 0; i < old_cap; i++)
+    {
+        bucket *b = old[i];
+        if (!b)
+            continue;
+
+        hm_node *n = b->head;
+        while (n)
+        {
+            hm_node *next = n->next;
+            size_t j = n->hash & (new_cap - 1);
+            bucket *nb = new_buckets[j];
+            if (!nb)
+            {
+                nb = bucket_new();
+                if (!nb)
+                {
+                    free(new_buckets);
+                    return -1;
+                }
+                new_buckets[j] = nb;
+            }
+
+            n->prev = NULL;
+            n->next = nb->head;
+            n->parent = n->left = n->right = NULL;
+            n->red = 0;
+            if (nb->head)
+                nb->head->prev = n;
+            nb->head = n;
+            nb->size++;
+            n = next;
+        }
+        free(b);
+    }
+    free(old);
+    hm->buckets = new_buckets;
     hm->cap = new_cap;
-    hm->size = 0;
 
-    for (size_t i = 0; i < old_cap; i++) {
-        bucket *b = old_buckets[i];
-        if (!b) continue;
-
-        if (b->k == LIST) {
-            bucket_list *l = b->impl;
-
-            for (list_node *n = l->head; n; n = n->next) {
-                hm_set(hm, n->key, n->val);
-            }
-
-        } else {
-            bucket_tree *t = b->impl;
-
-            rb_node *stack[64];
-            int sp = 0;
-            rb_node *cur = t->root;
-
-            while (cur || sp) {
-                while (cur) {
-                    stack[sp++] = cur;
-                    cur = cur->l;
-                }
-
-                cur = stack[--sp];
-                hm_set(hm, cur->key, cur->val);
-                cur = cur->r;
-            }
+    for (size_t i = 0; i < new_cap; i++)
+    {
+        bucket *b = new_buckets[i];
+        if (b && b->size >= TREEIFY_THRESHOLD)
+        {
+            bucket_treeify(b, hm->cmp);
         }
-
-        if (b->k == LIST) {
-            bucket_list *l = b->impl;
-
-            list_node *n = l->head;
-            while (n) {
-                list_node *next = n->next;
-                free(n);
-                n = next;
-            }
-            free(l);
-        } else {
-            bucket_tree *t = b->impl;
-
-            rb_node *stack[64];
-            int sp = 0;
-            rb_node *cur = t->root;
-
-            while (cur || sp) {
-                while (cur) {
-                    stack[sp++] = cur;
-                    cur = cur->l;
-                }
-
-                cur = stack[--sp];
-                rb_node *right = cur->r;
-                free(cur);
-                cur = right;
-            }
-            free(t);
-        }
-
-        free(b);
     }
-
-    free(old_buckets);
+    return 0;
 }
 
-void hm_set(hashmap *hm, void *k, void *v) {
-    if ((double)(hm->size + 1) / hm->cap > LOAD_FACTOR_MAX) {
-        hm_resize(hm, hm->cap * 2);
+void *hm_set(hashmap *hm, void *k, void *v)
+{
+    if ((double)(hm->size + 1) / hm->cap > LOAD_FACTOR_MAX)
+    {
+        if (hm_resize(hm, hm->cap * 2) < 0)
+            return HM_ERROR;
     }
-
     size_t h = hm->hash(k);
-    bucket *b = get_bucket(hm, h);
+    bucket *b = bucket_at(hm, h, 1);
+    if (!b)
+        return HM_ERROR;
 
-    int inserted = 0;
+    void *old = NULL;
+    int r = bucket_insert(b, h, k, v, hm->cmp, &old);
+    if (r < 0)
+        return HM_ERROR;
 
-    if (b->k == LIST) {
-        bucket_list *l = (bucket_list*)b->impl;
-
-        inserted = bl_insert(l, h, k, v, hm->cmp);
-
-        if (l->size >= TREEIFY_THRESHOLD) {
-            bucket_tree *t = bt_new();
-
-            for (list_node *n = l->head; n; n = n->next) {
-                bt_insert(t, n->hash, n->key, n->val, hm->cmp);
-            }
-
-            list_node *n = l->head;
-            while (n) {
-                list_node *next = n->next;
-                free(n);
-                n = next;
-            }
-
-            free(l);
-
-            b->k = TREE;
-            b->impl = t;
-        }
-
-    } else {
-        bt_insert(b->impl, h, k, v, hm->cmp);
-        inserted = 1; 
-        // inserted = bt_insert(b->impl, h, k, v, hm->cmp);
-    }
-
-    if (inserted) {
+    hm->version++;
+    if (r == 1)
+    {
         hm->size++;
-    }
-}
 
-void *hm_get(hashmap *hm, void *k) {
-    size_t h = hm->hash(k);
-    size_t i = h % hm->cap;
-
-    bucket *b = hm->buckets[i];
-    if (!b) return NULL;
-
-    if (b->k == LIST) {
-        return bl_find(b->impl, h, k, hm->cmp);
-    } else {
-        return bt_find(b->impl, h, k, hm->cmp);
-    }
-}
-
-void hm_free(hashmap *hm) {
-    if (!hm) return;
-
-    for (size_t i = 0; i < hm->cap; i++) {
-        bucket *b = hm->buckets[i];
-        if (!b) continue;
-
-        if (b->k == LIST) {
-            bucket_list *l = (bucket_list*)b->impl;
-
-            list_node *n = l->head;
-            while (n) {
-                list_node *next = n->next;
-                free(n);
-                n = next;
+        if (b->size >= TREEIFY_THRESHOLD && b->kind == BK_LIST)
+        {
+            if (hm->cap < MIN_TREEIFY_CAPACITY)
+            {
+                if (hm_resize(hm, hm->cap * 2) < 0)
+                    return HM_ERROR;
             }
-
-            free(l);
-        } else {
-            bucket_tree *t = (bucket_tree*)b->impl;
-
-            rb_node *stack[64];
-            int sp = 0;
-            rb_node *cur = t->root;
-
-            while (cur || sp) {
-                while (cur) {
-                    stack[sp++] = cur;
-                    cur = cur->l;
-                }
-
-                cur = stack[--sp];
-                rb_node *right = cur->r;
-
-                free(cur);
-                cur = right;
+            else
+            {
+                bucket_treeify(b, hm->cmp);
             }
-
-            free(t);
         }
-
-        free(b);
+        return HM_NEW_KEY;
     }
-
-    free(hm->buckets);
-    free(hm);
+    return old;
 }
 
-void hm_del(hashmap *hm, void *k) {
+int hm_get_ex(hashmap *hm, void *k, void **out)
+{
     size_t h = hm->hash(k);
-    size_t i = h % hm->cap;
+    bucket *b = bucket_at(hm, h, 0);
+    if (!b)
+        return 0;
+    return bucket_find(b, h, k, hm->cmp, out);
+}
 
+int hm_del_ex(hashmap *hm, void *k, void **out_key, void **out_val)
+{
+    size_t h = hm->hash(k);
+    size_t i = h & (hm->cap - 1);
     bucket *b = hm->buckets[i];
-    if (!b) return;
+    if (!b)
+        return 0;
 
-    int deleted = 0;
+    int r = bucket_delete(b, h, k, hm->cmp, out_key, out_val);
+    if (r <= 0)
+        return r;
 
-    if (b->k == LIST) {
-        deleted = bl_delete(b->impl, h, k, hm->cmp);
-    } else {
-        bt_delete(b->impl, h, k, hm->cmp);
-        deleted = 1;
+    hm->size--;
+    hm->version++;
+
+    if (b->kind == BK_TREE && b->size <= UNTREEIFY_THRESHOLD)
+    {
+        bucket_untreeify(b);
     }
 
-    if (deleted) {
-        hm->size--;
+    if (b->size == 0)
+    {
+        bucket_free(b);
+        hm->buckets[i] = NULL;
     }
 
     if (hm->cap > HASHMAP_MIN_CAP &&
-        (double)hm->size / hm->cap < LOAD_FACTOR_MIN) {
+        (double)hm->size / hm->cap < LOAD_FACTOR_MIN)
+    {
         hm_resize(hm, hm->cap / 2);
     }
+    return 1;
 }
 
-size_t hm_len(hashmap *hm){ return hm->size; }
+size_t hm_len(hashmap *hm) { return hm->size; }
+unsigned long hm_version(hashmap *hm) { return hm->version; }
+
+void hm_free(hashmap *hm)
+{
+    if (!hm)
+        return;
+    for (size_t i = 0; i < hm->cap; i++)
+    {
+        bucket_free(hm->buckets[i]);
+    }
+    free(hm->buckets);
+    free(hm);
+}
