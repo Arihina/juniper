@@ -44,6 +44,7 @@ static int py_cmp(void *a, void *b)
     }
     return r == 1 ? 0 : 1;
 }
+
 #define BEGIN_CB() (hm_callback_error = 0)
 #define CB_FAILED() (hm_callback_error)
 
@@ -58,6 +59,7 @@ static PyObject *hm_new_py(PyTypeObject *t, PyObject *a, PyObject *k)
         Py_DECREF(self);
         return PyErr_NoMemory();
     }
+    hm_set_err_flag(self->hm, &hm_callback_error);
     return (PyObject *)self;
 }
 
@@ -100,7 +102,7 @@ static void hm_dealloc(PyHashMap *self)
 
 static Py_ssize_t hm_len_py(PyHashMap *self) { return (Py_ssize_t)hm_len(self->hm); }
 
-static PyObject *hm_get_py(PyHashMap *self, PyObject *key)
+static PyObject *hm_subscript(PyHashMap *self, PyObject *key)
 {
     void *v = NULL;
     BEGIN_CB();
@@ -148,11 +150,118 @@ static int hm_ass_subscript(PyHashMap *self, PyObject *key, PyObject *val)
     }
     if (res == HM_NEW_KEY)
         return 0;
-
     Py_DECREF(key);
     Py_DECREF((PyObject *)res);
     return 0;
 }
+
+static int hm_contains(PyHashMap *self, PyObject *key)
+{
+    void *v = NULL;
+    BEGIN_CB();
+    int r = hm_get_ex(self->hm, key, &v);
+    if (CB_FAILED())
+        return -1;
+    return r == 1 ? 1 : 0;
+}
+
+static PyObject *hm_get_method(PyHashMap *self, PyObject *args)
+{
+    PyObject *key;
+    PyObject *def = Py_None;
+    if (!PyArg_ParseTuple(args, "O|O:get", &key, &def))
+        return NULL;
+
+    void *v = NULL;
+    BEGIN_CB();
+    int r = hm_get_ex(self->hm, key, &v);
+    if (CB_FAILED())
+        return NULL;
+
+    if (r == 1)
+    {
+        Py_INCREF((PyObject *)v);
+        return (PyObject *)v;
+    }
+    Py_INCREF(def);
+    return def;
+}
+
+static PyObject *hm_put(PyHashMap *self, PyObject *args)
+{
+    PyObject *key, *val;
+    if (!PyArg_ParseTuple(args, "OO:put", &key, &val))
+        return NULL;
+
+    Py_INCREF(key);
+    Py_INCREF(val);
+    BEGIN_CB();
+    void *res = hm_set(self->hm, key, val);
+    if (CB_FAILED() || res == HM_ERROR)
+    {
+        Py_DECREF(key);
+        Py_DECREF(val);
+        if (!PyErr_Occurred())
+            PyErr_NoMemory();
+        return NULL;
+    }
+    if (res == HM_NEW_KEY)
+        Py_RETURN_NONE;
+
+    Py_DECREF(key);
+    return (PyObject *)res;
+}
+
+static int hm_pop_internal(PyHashMap *self, PyObject *key, PyObject **out)
+{
+    void *ok = NULL, *ov = NULL;
+    BEGIN_CB();
+    int r = hm_del_ex(self->hm, key, &ok, &ov);
+    if (CB_FAILED())
+        return -1;
+    if (r == 0)
+    {
+        *out = NULL;
+        return 0;
+    }
+    Py_DECREF((PyObject *)ok);
+    *out = (PyObject *)ov;
+    return 0;
+}
+
+static PyObject *hm_pop(PyHashMap *self, PyObject *args)
+{
+    PyObject *key;
+    PyObject *def = NULL;
+    if (!PyArg_ParseTuple(args, "O|O:pop", &key, &def))
+        return NULL;
+
+    PyObject *old = NULL;
+    if (hm_pop_internal(self, key, &old) < 0)
+        return NULL;
+
+    if (old)
+        return old;
+    if (def)
+    {
+        Py_INCREF(def);
+        return def;
+    }
+    PyErr_SetObject(PyExc_KeyError, key);
+    return NULL;
+}
+
+static PyObject *hm_remove(PyHashMap *self, PyObject *key)
+{
+    PyObject *old = NULL;
+    if (hm_pop_internal(self, key, &old) < 0)
+        return NULL;
+    if (old)
+        return old;
+    Py_RETURN_NONE;
+}
+
+/* ---------- iterator ---------- */
 
 static PyObject *PyHMIter_iter(PyObject *self)
 {
@@ -237,14 +346,23 @@ static PyObject *hm_values(PyHashMap *self, PyObject *u) { return hm_make_iter(s
 static PyObject *hm_items(PyHashMap *self, PyObject *u) { return hm_make_iter(self, HM_ITER_ITEMS); }
 
 static PyMethodDef hashmap_methods[] = {
-    {"keys", (PyCFunction)hm_keys, METH_NOARGS, NULL},
-    {"values", (PyCFunction)hm_values, METH_NOARGS, NULL},
-    {"items", (PyCFunction)hm_items, METH_NOARGS, NULL},
+    {"keys", (PyCFunction)hm_keys, METH_NOARGS, "Return keys iterator"},
+    {"values", (PyCFunction)hm_values, METH_NOARGS, "Return values iterator"},
+    {"items", (PyCFunction)hm_items, METH_NOARGS, "Return items iterator"},
+    {"get", (PyCFunction)hm_get_method, METH_VARARGS, "get(key, default=None)"},
+    {"pop", (PyCFunction)hm_pop, METH_VARARGS, "pop(key[, default])"},
+    {"put", (PyCFunction)hm_put, METH_VARARGS, "put(key, value) -> old value or None"},
+    {"remove", (PyCFunction)hm_remove, METH_O, "remove(key) -> old value or None"},
     {NULL}};
+
 static PyMappingMethods map_methods = {
     (lenfunc)hm_len_py,
-    (binaryfunc)hm_get_py,
+    (binaryfunc)hm_subscript,
     (objobjargproc)hm_ass_subscript,
+};
+
+static PySequenceMethods seq_methods = {
+    .sq_contains = (objobjproc)hm_contains,
 };
 
 PyTypeObject HashMapType = {
@@ -257,6 +375,7 @@ PyTypeObject HashMapType = {
     .tp_traverse = (traverseproc)hm_traverse,
     .tp_clear = (inquiry)hm_clear,
     .tp_as_mapping = &map_methods,
+    .tp_as_sequence = &seq_methods,
     .tp_iter = (getiterfunc)hm_iter_py,
     .tp_methods = hashmap_methods,
 };

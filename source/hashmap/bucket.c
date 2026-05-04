@@ -515,7 +515,17 @@ void bucket_treeify(bucket *b, int (*cmp)(void *, void *))
         int err = 0;
         hm_node *dup = tree_insert(b, n, cmp, &err);
         (void)dup;
-        (void)err;
+        if (err)
+        {
+            b->kind = BK_LIST;
+            b->root = NULL;
+            for (hm_node *m = b->head; m; m = m->next)
+            {
+                m->parent = m->left = m->right = NULL;
+                m->red = 0;
+            }
+            return;
+        }
     }
 }
 

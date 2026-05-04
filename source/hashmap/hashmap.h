@@ -11,6 +11,7 @@ extern void *const HM_ERROR;
 
 hashmap *hm_new(size_t cap, hash_fn, cmp_fn);
 void hm_free(hashmap *);
+void hm_set_err_flag(hashmap *, int *flag);
 
 void *hm_set(hashmap *, void *key, void *val);
 int hm_get_ex(hashmap *, void *key, void **out);

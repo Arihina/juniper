@@ -6,10 +6,8 @@ typedef struct hm_node
     size_t hash;
     void *key;
     void *val;
-
     struct hm_node *prev;
     struct hm_node *next;
-
     struct hm_node *parent;
     struct hm_node *left;
     struct hm_node *right;
@@ -35,8 +33,10 @@ void bucket_free(bucket *b);
 
 int bucket_insert(bucket *b, size_t h, void *k, void *v,
                   int (*cmp)(void *, void *), void **old_val);
+
 int bucket_find(bucket *b, size_t h, void *k,
                 int (*cmp)(void *, void *), void **out);
+
 int bucket_delete(bucket *b, size_t h, void *k,
                   int (*cmp)(void *, void *),
                   void **out_key, void **out_val);

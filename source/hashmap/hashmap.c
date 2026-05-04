@@ -38,6 +38,21 @@ hashmap *hm_new(size_t cap, hash_fn h, cmp_fn c)
     return hm;
 }
 
+void hm_set_err_flag(hashmap *hm, int *flag)
+{
+    hm->err_flag = flag;
+}
+
+static int hm_safe_hash(hashmap *hm, void *k, size_t *out)
+{
+    if (hm->err_flag)
+        *hm->err_flag = 0;
+    *out = hm->hash(k);
+    if (hm->err_flag && *hm->err_flag)
+        return -1;
+    return 0;
+}
+
 static bucket *bucket_at(hashmap *hm, size_t h, int create)
 {
     size_t i = h & (hm->cap - 1);
@@ -110,12 +125,16 @@ static int hm_resize(hashmap *hm, size_t new_cap)
 
 void *hm_set(hashmap *hm, void *k, void *v)
 {
+    size_t h;
+    if (hm_safe_hash(hm, k, &h) < 0)
+        return HM_ERROR;
+
     if ((double)(hm->size + 1) / hm->cap > LOAD_FACTOR_MAX)
     {
         if (hm_resize(hm, hm->cap * 2) < 0)
             return HM_ERROR;
     }
-    size_t h = hm->hash(k);
+
     bucket *b = bucket_at(hm, h, 1);
     if (!b)
         return HM_ERROR;
@@ -129,7 +148,6 @@ void *hm_set(hashmap *hm, void *k, void *v)
     if (r == 1)
     {
         hm->size++;
-
         if (b->size >= TREEIFY_THRESHOLD && b->kind == BK_LIST)
         {
             if (hm->cap < MIN_TREEIFY_CAPACITY)
@@ -149,7 +167,9 @@ void *hm_set(hashmap *hm, void *k, void *v)
 
 int hm_get_ex(hashmap *hm, void *k, void **out)
 {
-    size_t h = hm->hash(k);
+    size_t h;
+    if (hm_safe_hash(hm, k, &h) < 0)
+        return -1;
     bucket *b = bucket_at(hm, h, 0);
     if (!b)
         return 0;
@@ -158,7 +178,10 @@ int hm_get_ex(hashmap *hm, void *k, void **out)
 
 int hm_del_ex(hashmap *hm, void *k, void **out_key, void **out_val)
 {
-    size_t h = hm->hash(k);
+    size_t h;
+    if (hm_safe_hash(hm, k, &h) < 0)
+        return -1;
+
     size_t i = h & (hm->cap - 1);
     bucket *b = hm->buckets[i];
     if (!b)
