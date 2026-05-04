@@ -36,8 +36,12 @@
 
 | Method | Signature | Description |
 |---|---|---|
+| `get` | `()` | get(key, default=None) |
 | `items` | `()` | Return items iterator |
 | `keys` | `()` | Return keys iterator |
+| `pop` | `()` | pop(key[, default]) |
+| `put` | `()` | put(key, value) -> old value or None |
+| `remove` | `()` | remove(key) -> old value or None |
 | `values` | `()` | Return values iterator |
 
 ## RHMap
