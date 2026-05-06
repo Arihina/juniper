@@ -10,6 +10,6 @@ PYTHONMALLOC=malloc python3.11 memory_runner.py
 pip uninstall juniper -y
 pip install -e . --force-reinstall
 
-tree -I "__pycache__|*.pyc|.git|__pycache__|.venv|venv" -L 5
+tree -I "__pycache__|*.pyc|.git|__pycache__|.venv|venv" -L 6
 
 rm -rf build *.egg-info src/juniper/*.so
