@@ -33,14 +33,16 @@
 #define SW_H2(hash) ((uint8_t)((hash) >> 57))
 #define SW_H1(hash) ((size_t)(hash))
 
-typedef struct {
+typedef struct
+{
     PyObject *key;
     PyObject *value;
     size_t hash;
 } SWSlot;
 
-typedef struct {
-    uint8_t *ctrl; 
+typedef struct
+{
+    uint8_t *ctrl;
     SWSlot *slots;
     size_t capacity;
     size_t size;

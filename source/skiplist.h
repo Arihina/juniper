@@ -7,13 +7,15 @@
 #define SKIPLIST_MAX_LEVEL 32
 #define SKIPLIST_P 0.25
 
-typedef struct SkipNode {
+typedef struct SkipNode
+{
     PyObject *key;
     int level;
     struct SkipNode **forward;
 } SkipNode;
 
-typedef struct {
+typedef struct
+{
     SkipNode *header;
     int level;
     size_t size;

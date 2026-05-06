@@ -19,27 +19,30 @@
 #define BTREE_MIN_KEYS ((BTREE_ORDER + 1) / 2 - 1)
 #define BTREE_MAX_KEYS (BTREE_ORDER - 1)
 
-typedef struct BTreeNode {
+typedef struct BTreeNode
+{
     PyObject **keys;
     struct BTreeNode **children;
     int n;
     int leaf;
 } BTreeNode;
 
-typedef struct {
+typedef struct
+{
     BTreeNode *root;
     size_t size;
     int order;
 } BTree;
 
-typedef struct {
+typedef struct
+{
     BTreeNode *node;
     int idx;
 } BTreePos;
 
 BTree *btree_create(int order);
 
-void   btree_free(BTree *tree);
+void btree_free(BTree *tree);
 int btree_insert(BTree *tree, PyObject *key);
 int btree_remove(BTree *tree, PyObject *key);
 int btree_contains(BTree *tree, PyObject *key);

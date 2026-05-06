@@ -4,7 +4,8 @@
 static BSTNode *node_create(PyObject *key)
 {
     BSTNode *n = malloc(sizeof(BSTNode));
-    if (!n) return NULL;
+    if (!n)
+        return NULL;
     Py_INCREF(key);
     n->key = key;
     n->left = NULL;
@@ -15,7 +16,8 @@ static BSTNode *node_create(PyObject *key)
 
 static void node_free_recursive(BSTNode *node)
 {
-    if (!node) return;
+    if (!node)
+        return;
     node_free_recursive(node->left);
     node_free_recursive(node->right);
     Py_DECREF(node->key);
@@ -25,13 +27,21 @@ static void node_free_recursive(BSTNode *node)
 static BSTNode *find_node(BST *tree, PyObject *key)
 {
     BSTNode *x = tree->root;
-    while (x) {
+    while (x)
+    {
         int cmp = PyObject_RichCompareBool(key, x->key, Py_LT);
-        if (cmp < 0) return (BSTNode *)(intptr_t)-1;
-        if (cmp) { x = x->left; continue; }
+        if (cmp < 0)
+            return (BSTNode *)(intptr_t)-1;
+        if (cmp)
+        {
+            x = x->left;
+            continue;
+        }
         int eq = PyObject_RichCompareBool(key, x->key, Py_EQ);
-        if (eq < 0) return (BSTNode *)(intptr_t)-1;
-        if (eq) return x;
+        if (eq < 0)
+            return (BSTNode *)(intptr_t)-1;
+        if (eq)
+            return x;
         x = x->right;
     }
     return NULL;
@@ -40,7 +50,8 @@ static BSTNode *find_node(BST *tree, PyObject *key)
 BST *bst_create(void)
 {
     BST *tree = malloc(sizeof(BST));
-    if (!tree) return NULL;
+    if (!tree)
+        return NULL;
     tree->root = NULL;
     tree->size = 0;
     return tree;
@@ -48,7 +59,8 @@ BST *bst_create(void)
 
 void bst_free(BST *tree)
 {
-    if (!tree) return;
+    if (!tree)
+        return;
     node_free_recursive(tree->root);
     free(tree);
 }
@@ -56,7 +68,8 @@ void bst_free(BST *tree)
 int bst_contains(BST *tree, PyObject *key)
 {
     BSTNode *n = find_node(tree, key);
-    if (n == (BSTNode *)(intptr_t)-1) return -1;
+    if (n == (BSTNode *)(intptr_t)-1)
+        return -1;
     return n ? 1 : 0;
 }
 
@@ -74,7 +87,8 @@ BSTNode *bst_successor(BST *tree, BSTNode *node)
     if (node->right)
         return bst_minimum(tree, node->right);
     BSTNode *y = node->parent;
-    while (y && node == y->right) {
+    while (y && node == y->right)
+    {
         node = y;
         y = y->parent;
     }
@@ -83,7 +97,8 @@ BSTNode *bst_successor(BST *tree, BSTNode *node)
 
 static int node_height(BSTNode *node)
 {
-    if (!node) return 0;
+    if (!node)
+        return 0;
     int lh = node_height(node->left);
     int rh = node_height(node->right);
     return 1 + (lh > rh ? lh : rh);
@@ -99,28 +114,50 @@ int bst_insert(BST *tree, PyObject *key)
     BSTNode *y = NULL;
     BSTNode *x = tree->root;
 
-    while (x) {
+    while (x)
+    {
         y = x;
         int cmp = PyObject_RichCompareBool(key, x->key, Py_LT);
-        if (cmp < 0) return -1;
-        if (cmp) { x = x->left; continue; }
+        if (cmp < 0)
+            return -1;
+        if (cmp)
+        {
+            x = x->left;
+            continue;
+        }
         int eq = PyObject_RichCompareBool(key, x->key, Py_EQ);
-        if (eq < 0) return -1;
-        if (eq) return 0;
+        if (eq < 0)
+            return -1;
+        if (eq)
+            return 0;
         x = x->right;
     }
 
     BSTNode *z = node_create(key);
-    if (!z) { PyErr_NoMemory(); return -1; }
+    if (!z)
+    {
+        PyErr_NoMemory();
+        return -1;
+    }
 
     z->parent = y;
-    if (!y) {
+    if (!y)
+    {
         tree->root = z;
-    } else {
+    }
+    else
+    {
         int cmp = PyObject_RichCompareBool(key, y->key, Py_LT);
-        if (cmp < 0) { Py_DECREF(z->key); free(z); return -1; }
-        if (cmp) y->left = z;
-        else     y->right = z;
+        if (cmp < 0)
+        {
+            Py_DECREF(z->key);
+            free(z);
+            return -1;
+        }
+        if (cmp)
+            y->left = z;
+        else
+            y->right = z;
     }
 
     tree->size++;
@@ -135,22 +172,31 @@ static void transplant(BST *tree, BSTNode *u, BSTNode *v)
         u->parent->left = v;
     else
         u->parent->right = v;
-    if (v) v->parent = u->parent;
+    if (v)
+        v->parent = u->parent;
 }
 
 int bst_remove(BST *tree, PyObject *key)
 {
     BSTNode *z = find_node(tree, key);
-    if (z == (BSTNode *)(intptr_t)-1) return -1;
-    if (!z) return 0;
+    if (z == (BSTNode *)(intptr_t)-1)
+        return -1;
+    if (!z)
+        return 0;
 
-    if (!z->left) {
+    if (!z->left)
+    {
         transplant(tree, z, z->right);
-    } else if (!z->right) {
+    }
+    else if (!z->right)
+    {
         transplant(tree, z, z->left);
-    } else {
+    }
+    else
+    {
         BSTNode *y = bst_minimum(tree, z->right);
-        if (y->parent != z) {
+        if (y->parent != z)
+        {
             transplant(tree, y, y->right);
             y->right = z->right;
             y->right->parent = y;

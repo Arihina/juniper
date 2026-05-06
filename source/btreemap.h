@@ -12,18 +12,20 @@
 
 #define BTM_DEFAULT_ORDER 8
 
-typedef struct BTMNode {
-    PyObject         **keys;
-    PyObject         **values;
-    struct BTMNode   **children;
-    int                n;
-    int                leaf;
+typedef struct BTMNode
+{
+    PyObject **keys;
+    PyObject **values;
+    struct BTMNode **children;
+    int n;
+    int leaf;
 } BTMNode;
 
-typedef struct {
+typedef struct
+{
     BTMNode *root;
-    size_t   size;
-    int      order;
+    size_t size;
+    int order;
 } BTreeMap;
 
 BTreeMap *btm_create(int order);
@@ -36,7 +38,8 @@ PyObject *btm_get(BTreeMap *map, PyObject *key);
 int btm_remove(BTreeMap *map, PyObject *key);
 int btm_contains(BTreeMap *map, PyObject *key);
 
-typedef struct {
+typedef struct
+{
     BTMNode *node;
     int idx;
 } BTMPos;

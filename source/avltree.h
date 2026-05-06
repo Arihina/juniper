@@ -7,7 +7,7 @@
 typedef struct AVLNode
 {
     PyObject *key;
-    int       height;
+    int height;
     struct AVLNode *left;
     struct AVLNode *right;
     struct AVLNode *parent;

@@ -4,7 +4,11 @@
 #include <Python.h>
 #include <stddef.h>
 
-typedef enum { RB_BLACK, RB_RED } RBColor;
+typedef enum
+{
+    RB_BLACK,
+    RB_RED
+} RBColor;
 
 typedef struct RBNode
 {

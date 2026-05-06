@@ -4,12 +4,14 @@
 #include <Python.h>
 #include <stddef.h>
 
-typedef struct SListNode {
+typedef struct SListNode
+{
     PyObject *value;
     struct SListNode *next;
 } SListNode;
 
-typedef struct {
+typedef struct
+{
     SListNode *head;
     SListNode *tail;
     size_t size;

@@ -1,16 +1,16 @@
 #include <Python.h>
 #include "btree.h"
 
-typedef struct {
-    PyObject_HEAD
-    BTree *tree;
+typedef struct
+{
+    PyObject_HEAD BTree *tree;
 } PyBTreeSetObject;
 
-typedef struct {
-    PyObject_HEAD
-    PyBTreeSetObject *set;
-    BTreePos          pos;
-    size_t            snap_size;
+typedef struct
+{
+    PyObject_HEAD PyBTreeSetObject *set;
+    BTreePos pos;
+    size_t snap_size;
 } PyBTreeSetIterObject;
 
 static PyTypeObject PyBTreeSetIterType;
@@ -28,7 +28,8 @@ static PyObject *PyBTreeSetIter_next(PyBTreeSetIterObject *it)
 
     BTree *tree = it->set->tree;
 
-    if (tree->size != it->snap_size) {
+    if (tree->size != it->snap_size)
+    {
         PyErr_SetString(PyExc_RuntimeError,
                         "BTreeSet changed size during iteration");
         return NULL;
@@ -52,12 +53,12 @@ static PyObject *PyBTreeSetIter_iter(PyObject *self)
 
 static PyTypeObject PyBTreeSetIterType = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name      = "juniper._native.BTreeSetIterator",
+        .tp_name = "juniper._native.BTreeSetIterator",
     .tp_basicsize = sizeof(PyBTreeSetIterObject),
-    .tp_flags     = Py_TPFLAGS_DEFAULT,
-    .tp_dealloc   = (destructor)PyBTreeSetIter_dealloc,
-    .tp_iter      = PyBTreeSetIter_iter,
-    .tp_iternext  = (iternextfunc)PyBTreeSetIter_next,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_dealloc = (destructor)PyBTreeSetIter_dealloc,
+    .tp_iter = PyBTreeSetIter_iter,
+    .tp_iternext = (iternextfunc)PyBTreeSetIter_next,
 };
 
 static PyObject *PyBTreeSet_new(PyTypeObject *type,
@@ -72,36 +73,50 @@ static PyObject *PyBTreeSet_new(PyTypeObject *type,
                                      &iterable, &order))
         return NULL;
 
-    if (order < 3) {
+    if (order < 3)
+    {
         PyErr_SetString(PyExc_ValueError,
                         "B-tree order must be at least 3");
         return NULL;
     }
 
     self = (PyBTreeSetObject *)type->tp_alloc(type, 0);
-    if (!self) return NULL;
+    if (!self)
+        return NULL;
 
     self->tree = btree_create(order);
-    if (!self->tree) {
+    if (!self->tree)
+    {
         Py_DECREF(self);
         return PyErr_NoMemory();
     }
 
-    if (iterable) {
+    if (iterable)
+    {
         PyObject *iter = PyObject_GetIter(iterable);
-        if (!iter) { Py_DECREF(self); return NULL; }
+        if (!iter)
+        {
+            Py_DECREF(self);
+            return NULL;
+        }
         PyObject *item;
-        while ((item = PyIter_Next(iter))) {
+        while ((item = PyIter_Next(iter)))
+        {
             int rc = btree_insert(self->tree, item);
             Py_DECREF(item);
-            if (rc < 0) {
+            if (rc < 0)
+            {
                 Py_DECREF(iter);
                 Py_DECREF(self);
                 return NULL;
             }
         }
         Py_DECREF(iter);
-        if (PyErr_Occurred()) { Py_DECREF(self); return NULL; }
+        if (PyErr_Occurred())
+        {
+            Py_DECREF(self);
+            return NULL;
+        }
     }
 
     return (PyObject *)self;
@@ -125,35 +140,42 @@ static int PyBTreeSet_contains(PyBTreeSetObject *self, PyObject *key)
 }
 
 static PySequenceMethods PyBTreeSet_as_sequence = {
-    .sq_length   = (lenfunc)PyBTreeSet_len,
+    .sq_length = (lenfunc)PyBTreeSet_len,
     .sq_contains = (objobjproc)PyBTreeSet_contains,
 };
 
 static PyObject *PyBTreeSet_add(PyBTreeSetObject *self, PyObject *args)
 {
     PyObject *key;
-    if (!PyArg_ParseTuple(args, "O", &key)) return NULL;
+    if (!PyArg_ParseTuple(args, "O", &key))
+        return NULL;
     int rc = btree_insert(self->tree, key);
-    if (rc < 0) return NULL;
+    if (rc < 0)
+        return NULL;
     Py_RETURN_NONE;
 }
 
 static PyObject *PyBTreeSet_discard(PyBTreeSetObject *self, PyObject *args)
 {
     PyObject *key;
-    if (!PyArg_ParseTuple(args, "O", &key)) return NULL;
+    if (!PyArg_ParseTuple(args, "O", &key))
+        return NULL;
     int rc = btree_remove(self->tree, key);
-    if (rc < 0) return NULL;
+    if (rc < 0)
+        return NULL;
     Py_RETURN_NONE;
 }
 
 static PyObject *PyBTreeSet_remove(PyBTreeSetObject *self, PyObject *args)
 {
     PyObject *key;
-    if (!PyArg_ParseTuple(args, "O", &key)) return NULL;
+    if (!PyArg_ParseTuple(args, "O", &key))
+        return NULL;
     int rc = btree_remove(self->tree, key);
-    if (rc < 0) return NULL;
-    if (rc == 0) {
+    if (rc < 0)
+        return NULL;
+    if (rc == 0)
+    {
         PyErr_SetObject(PyExc_KeyError, key);
         return NULL;
     }
@@ -164,20 +186,24 @@ static PyObject *PyBTreeSet_contains_method(PyBTreeSetObject *self,
                                             PyObject *args)
 {
     PyObject *key;
-    if (!PyArg_ParseTuple(args, "O", &key)) return NULL;
+    if (!PyArg_ParseTuple(args, "O", &key))
+        return NULL;
     int rc = btree_contains(self->tree, key);
-    if (rc < 0) return NULL;
+    if (rc < 0)
+        return NULL;
     return PyBool_FromLong(rc);
 }
 
 static PyObject *PyBTreeSet_clear(PyBTreeSetObject *self,
                                   PyObject *Py_UNUSED(ignored))
 {
-    if (self->tree) {
+    if (self->tree)
+    {
         int order = self->tree->order;
         btree_free(self->tree);
         self->tree = btree_create(order);
-        if (!self->tree) return PyErr_NoMemory();
+        if (!self->tree)
+            return PyErr_NoMemory();
     }
     Py_RETURN_NONE;
 }
@@ -185,7 +211,8 @@ static PyObject *PyBTreeSet_clear(PyBTreeSetObject *self,
 static PyObject *PyBTreeSet_pop(PyBTreeSetObject *self,
                                 PyObject *Py_UNUSED(ignored))
 {
-    if (self->tree->size == 0) {
+    if (self->tree->size == 0)
+    {
         PyErr_SetString(PyExc_KeyError, "pop from an empty set");
         return NULL;
     }
@@ -194,7 +221,8 @@ static PyObject *PyBTreeSet_pop(PyBTreeSetObject *self,
     Py_INCREF(key);
 
     int rc = btree_remove(self->tree, key);
-    if (rc < 0) {
+    if (rc < 0)
+    {
         Py_DECREF(key);
         return NULL;
     }
@@ -214,24 +242,23 @@ static PyObject *PyBTreeSet_order(PyBTreeSetObject *self,
 }
 
 static PyMethodDef PyBTreeSet_methods[] = {
-    {"add",      (PyCFunction)PyBTreeSet_add,      METH_VARARGS,
+    {"add", (PyCFunction)PyBTreeSet_add, METH_VARARGS,
      "Add an element to the set."},
-    {"discard",  (PyCFunction)PyBTreeSet_discard,   METH_VARARGS,
+    {"discard", (PyCFunction)PyBTreeSet_discard, METH_VARARGS,
      "Remove an element if present (no error if missing)."},
-    {"remove",   (PyCFunction)PyBTreeSet_remove,    METH_VARARGS,
+    {"remove", (PyCFunction)PyBTreeSet_remove, METH_VARARGS,
      "Remove an element; raise KeyError if missing."},
     {"contains", (PyCFunction)PyBTreeSet_contains_method, METH_VARARGS,
      "Return True if element is in the set."},
-    {"clear",    (PyCFunction)PyBTreeSet_clear,     METH_NOARGS,
+    {"clear", (PyCFunction)PyBTreeSet_clear, METH_NOARGS,
      "Remove all elements."},
-    {"pop",      (PyCFunction)PyBTreeSet_pop,       METH_NOARGS,
+    {"pop", (PyCFunction)PyBTreeSet_pop, METH_NOARGS,
      "Remove and return the smallest element."},
-    {"height",   (PyCFunction)PyBTreeSet_height,    METH_NOARGS,
+    {"height", (PyCFunction)PyBTreeSet_height, METH_NOARGS,
      "Return the height of the B-tree."},
-    {"order",    (PyCFunction)PyBTreeSet_order,     METH_NOARGS,
+    {"order", (PyCFunction)PyBTreeSet_order, METH_NOARGS,
      "Return the order (branching factor) of the B-tree."},
-    {NULL}
-};
+    {NULL}};
 
 static PyObject *PyBTreeSet_iter(PyBTreeSetObject *self)
 {
@@ -240,12 +267,13 @@ static PyObject *PyBTreeSet_iter(PyBTreeSetObject *self)
 
     PyBTreeSetIterObject *it = PyObject_New(PyBTreeSetIterObject,
                                             &PyBTreeSetIterType);
-    if (!it) return NULL;
+    if (!it)
+        return NULL;
 
     Py_INCREF(self);
-    it->set       = self;
+    it->set = self;
     it->snap_size = self->tree->size;
-    it->pos       = btree_first(self->tree);
+    it->pos = btree_first(self->tree);
     return (PyObject *)it;
 }
 
@@ -255,14 +283,23 @@ static PyObject *PyBTreeSet_repr(PyBTreeSetObject *self)
         return PyUnicode_FromString("BTreeSet()");
 
     PyObject *parts = PyList_New(0);
-    if (!parts) return NULL;
+    if (!parts)
+        return NULL;
 
     BTreePos pos = btree_first(self->tree);
-    while (pos.node) {
+    while (pos.node)
+    {
         PyObject *r = PyObject_Repr(pos.node->keys[pos.idx]);
-        if (!r) { Py_DECREF(parts); return NULL; }
-        if (PyList_Append(parts, r) < 0) {
-            Py_DECREF(r); Py_DECREF(parts); return NULL;
+        if (!r)
+        {
+            Py_DECREF(parts);
+            return NULL;
+        }
+        if (PyList_Append(parts, r) < 0)
+        {
+            Py_DECREF(r);
+            Py_DECREF(parts);
+            return NULL;
         }
         Py_DECREF(r);
         pos = btree_next(self->tree, pos);
@@ -272,7 +309,8 @@ static PyObject *PyBTreeSet_repr(PyBTreeSetObject *self)
     PyObject *joined = PyUnicode_Join(sep, parts);
     Py_DECREF(sep);
     Py_DECREF(parts);
-    if (!joined) return NULL;
+    if (!joined)
+        return NULL;
 
     PyObject *result = PyUnicode_FromFormat("BTreeSet({%U})", joined);
     Py_DECREF(joined);
@@ -290,41 +328,48 @@ static PyObject *PyBTreeSet_richcmp(PyObject *self, PyObject *other, int op)
     PyBTreeSetObject *a = (PyBTreeSetObject *)self;
     PyBTreeSetObject *b = (PyBTreeSetObject *)other;
 
-    if (a->tree->size != b->tree->size) {
-        if (op == Py_EQ) Py_RETURN_FALSE;
+    if (a->tree->size != b->tree->size)
+    {
+        if (op == Py_EQ)
+            Py_RETURN_FALSE;
         Py_RETURN_TRUE;
     }
 
     BTreePos pa = btree_first(a->tree);
     BTreePos pb = btree_first(b->tree);
 
-    while (pa.node) {
+    while (pa.node)
+    {
         int eq = PyObject_RichCompareBool(pa.node->keys[pa.idx],
                                           pb.node->keys[pb.idx], Py_EQ);
-        if (eq < 0) return NULL;
-        if (!eq) {
-            if (op == Py_EQ) Py_RETURN_FALSE;
+        if (eq < 0)
+            return NULL;
+        if (!eq)
+        {
+            if (op == Py_EQ)
+                Py_RETURN_FALSE;
             Py_RETURN_TRUE;
         }
         pa = btree_next(a->tree, pa);
         pb = btree_next(b->tree, pb);
     }
 
-    if (op == Py_EQ) Py_RETURN_TRUE;
+    if (op == Py_EQ)
+        Py_RETURN_TRUE;
     Py_RETURN_FALSE;
 }
 
 PyTypeObject PyBTreeSetType = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name        = "juniper._native.BTreeSet",
-    .tp_basicsize   = sizeof(PyBTreeSetObject),
-    .tp_flags       = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
-    .tp_new         = PyBTreeSet_new,
-    .tp_dealloc     = (destructor)PyBTreeSet_dealloc,
-    .tp_methods     = PyBTreeSet_methods,
+        .tp_name = "juniper._native.BTreeSet",
+    .tp_basicsize = sizeof(PyBTreeSetObject),
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+    .tp_new = PyBTreeSet_new,
+    .tp_dealloc = (destructor)PyBTreeSet_dealloc,
+    .tp_methods = PyBTreeSet_methods,
     .tp_as_sequence = &PyBTreeSet_as_sequence,
-    .tp_iter        = (getiterfunc)PyBTreeSet_iter,
-    .tp_repr        = (reprfunc)PyBTreeSet_repr,
+    .tp_iter = (getiterfunc)PyBTreeSet_iter,
+    .tp_repr = (reprfunc)PyBTreeSet_repr,
     .tp_richcompare = PyBTreeSet_richcmp,
-    .tp_doc         = "Sorted set based on a B-tree.",
+    .tp_doc = "Sorted set based on a B-tree.",
 };

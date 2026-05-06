@@ -5,15 +5,25 @@
 static BTreeNode *node_create(int order, int leaf)
 {
     BTreeNode *n = malloc(sizeof(BTreeNode));
-    if (!n) return NULL;
+    if (!n)
+        return NULL;
 
     n->keys = malloc(sizeof(PyObject *) * (order - 1));
-    if (!n->keys) { free(n); return NULL; }
+    if (!n->keys)
+    {
+        free(n);
+        return NULL;
+    }
 
     n->children = malloc(sizeof(BTreeNode *) * order);
-    if (!n->children) { free(n->keys); free(n); return NULL; }
+    if (!n->children)
+    {
+        free(n->keys);
+        free(n);
+        return NULL;
+    }
 
-    n->n    = 0;
+    n->n = 0;
     n->leaf = leaf;
     memset(n->children, 0, sizeof(BTreeNode *) * order);
     return n;
@@ -21,10 +31,12 @@ static BTreeNode *node_create(int order, int leaf)
 
 static void node_free_recursive(BTreeNode *node)
 {
-    if (!node) return;
+    if (!node)
+        return;
     for (int i = 0; i < node->n; i++)
         Py_DECREF(node->keys[i]);
-    if (!node->leaf) {
+    if (!node->leaf)
+    {
         for (int i = 0; i <= node->n; i++)
             node_free_recursive(node->children[i]);
     }
@@ -37,16 +49,26 @@ static int node_search(BTreeNode *node, PyObject *key, int *found)
 {
     int lo = 0, hi = node->n;
     *found = 0;
-    while (lo < hi) {
+    while (lo < hi)
+    {
         int mid = (lo + hi) / 2;
         int cmp = PyObject_RichCompareBool(key, node->keys[mid], Py_LT);
-        if (cmp < 0) return -1;
-        if (cmp) {
+        if (cmp < 0)
+            return -1;
+        if (cmp)
+        {
             hi = mid;
-        } else {
+        }
+        else
+        {
             int eq = PyObject_RichCompareBool(key, node->keys[mid], Py_EQ);
-            if (eq < 0) return -1;
-            if (eq) { *found = 1; return mid; }
+            if (eq < 0)
+                return -1;
+            if (eq)
+            {
+                *found = 1;
+                return mid;
+            }
             lo = mid + 1;
         }
     }
@@ -55,22 +77,29 @@ static int node_search(BTreeNode *node, PyObject *key, int *found)
 
 BTree *btree_create(int order)
 {
-    if (order < 3) order = 3;
+    if (order < 3)
+        order = 3;
 
     BTree *tree = malloc(sizeof(BTree));
-    if (!tree) return NULL;
+    if (!tree)
+        return NULL;
 
     tree->root = node_create(order, 1);
-    if (!tree->root) { free(tree); return NULL; }
+    if (!tree->root)
+    {
+        free(tree);
+        return NULL;
+    }
 
-    tree->size  = 0;
+    tree->size = 0;
     tree->order = order;
     return tree;
 }
 
 void btree_free(BTree *tree)
 {
-    if (!tree) return;
+    if (!tree)
+        return;
     node_free_recursive(tree->root);
     free(tree);
 }
@@ -78,12 +107,16 @@ void btree_free(BTree *tree)
 int btree_contains(BTree *tree, PyObject *key)
 {
     BTreeNode *x = tree->root;
-    while (x) {
+    while (x)
+    {
         int found;
         int i = node_search(x, key, &found);
-        if (i < 0) return -1;
-        if (found) return 1;
-        if (x->leaf) return 0;
+        if (i < 0)
+            return -1;
+        if (found)
+            return 1;
+        if (x->leaf)
+            return 0;
         x = x->children[i];
     }
     return 0;
@@ -96,13 +129,16 @@ static int split_child(BTree *tree, BTreeNode *x, int i)
     int t = (order - 1) / 2;
 
     BTreeNode *z = node_create(order, y->leaf);
-    if (!z) return -1;
+    if (!z)
+        return -1;
 
     z->n = y->n - t - 1;
-    for (int j = 0; j < z->n; j++) {
+    for (int j = 0; j < z->n; j++)
+    {
         z->keys[j] = y->keys[t + 1 + j];
     }
-    if (!y->leaf) {
+    if (!y->leaf)
+    {
         for (int j = 0; j <= z->n; j++)
             z->children[j] = y->children[t + 1 + j];
     }
@@ -127,10 +163,13 @@ static int insert_nonfull(BTree *tree, BTreeNode *x, PyObject *key)
 {
     int found;
     int i = node_search(x, key, &found);
-    if (i < 0) return -1;
-    if (found) return 0;
+    if (i < 0)
+        return -1;
+    if (found)
+        return 0;
 
-    if (x->leaf) {
+    if (x->leaf)
+    {
         for (int j = x->n - 1; j >= i; j--)
             x->keys[j + 1] = x->keys[j];
         Py_INCREF(key);
@@ -139,14 +178,20 @@ static int insert_nonfull(BTree *tree, BTreeNode *x, PyObject *key)
         return 1;
     }
 
-    if (x->children[i]->n == tree->order - 1) {
-        if (split_child(tree, x, i) < 0) return -1;
+    if (x->children[i]->n == tree->order - 1)
+    {
+        if (split_child(tree, x, i) < 0)
+            return -1;
         int cmp = PyObject_RichCompareBool(key, x->keys[i], Py_LT);
-        if (cmp < 0) return -1;
-        if (!cmp) {
+        if (cmp < 0)
+            return -1;
+        if (!cmp)
+        {
             int eq = PyObject_RichCompareBool(key, x->keys[i], Py_EQ);
-            if (eq < 0) return -1;
-            if (eq) return 0;
+            if (eq < 0)
+                return -1;
+            if (eq)
+                return 0;
             i++;
         }
     }
@@ -157,19 +202,27 @@ int btree_insert(BTree *tree, PyObject *key)
 {
     BTreeNode *r = tree->root;
 
-    if (r->n == tree->order - 1) {
+    if (r->n == tree->order - 1)
+    {
         BTreeNode *s = node_create(tree->order, 0);
-        if (!s) { PyErr_NoMemory(); return -1; }
+        if (!s)
+        {
+            PyErr_NoMemory();
+            return -1;
+        }
         s->children[0] = r;
         tree->root = s;
-        if (split_child(tree, s, 0) < 0) return -1;
+        if (split_child(tree, s, 0) < 0)
+            return -1;
         int rc = insert_nonfull(tree, s, key);
-        if (rc > 0) tree->size++;
+        if (rc > 0)
+            tree->size++;
         return rc;
     }
 
     int rc = insert_nonfull(tree, r, key);
-    if (rc > 0) tree->size++;
+    if (rc > 0)
+        tree->size++;
     return rc;
 }
 
@@ -189,10 +242,9 @@ static PyObject *get_successor(BTreeNode *x)
     return x->keys[0];
 }
 
-
 static void merge_children(BTree *tree, BTreeNode *x, int i)
 {
-    BTreeNode *left  = x->children[i];
+    BTreeNode *left = x->children[i];
     BTreeNode *right = x->children[i + 1];
     int t = (tree->order - 1) / 2;
 
@@ -200,7 +252,8 @@ static void merge_children(BTree *tree, BTreeNode *x, int i)
 
     for (int j = 0; j < right->n; j++)
         left->keys[t + 1 + j] = right->keys[j];
-    if (!left->leaf) {
+    if (!left->leaf)
+    {
         for (int j = 0; j <= right->n; j++)
             left->children[t + 1 + j] = right->children[j];
     }
@@ -221,13 +274,15 @@ static void ensure_min_keys(BTree *tree, BTreeNode *x, int i)
 {
     int t = (tree->order - 1) / 2;
 
-    if (i > 0 && x->children[i - 1]->n > t) {
+    if (i > 0 && x->children[i - 1]->n > t)
+    {
         BTreeNode *child = x->children[i];
-        BTreeNode *lsib  = x->children[i - 1];
+        BTreeNode *lsib = x->children[i - 1];
 
         for (int j = child->n - 1; j >= 0; j--)
             child->keys[j + 1] = child->keys[j];
-        if (!child->leaf) {
+        if (!child->leaf)
+        {
             for (int j = child->n; j >= 0; j--)
                 child->children[j + 1] = child->children[j];
         }
@@ -242,9 +297,10 @@ static void ensure_min_keys(BTree *tree, BTreeNode *x, int i)
         return;
     }
 
-    if (i < x->n && x->children[i + 1]->n > t) {
+    if (i < x->n && x->children[i + 1]->n > t)
+    {
         BTreeNode *child = x->children[i];
-        BTreeNode *rsib  = x->children[i + 1];
+        BTreeNode *rsib = x->children[i + 1];
 
         child->keys[child->n] = x->keys[i];
         x->keys[i] = rsib->keys[0];
@@ -253,7 +309,8 @@ static void ensure_min_keys(BTree *tree, BTreeNode *x, int i)
 
         for (int j = 0; j < rsib->n - 1; j++)
             rsib->keys[j] = rsib->keys[j + 1];
-        if (!rsib->leaf) {
+        if (!rsib->leaf)
+        {
             for (int j = 0; j < rsib->n; j++)
                 rsib->children[j] = rsib->children[j + 1];
         }
@@ -273,12 +330,15 @@ static int delete_from_node(BTree *tree, BTreeNode *x, PyObject *key)
 {
     int found;
     int i = node_search(x, key, &found);
-    if (i < 0) return -1;
+    if (i < 0)
+        return -1;
 
     int t = (tree->order - 1) / 2;
 
-    if (found) {
-        if (x->leaf) {
+    if (found)
+    {
+        if (x->leaf)
+        {
             Py_DECREF(x->keys[i]);
             for (int j = i; j < x->n - 1; j++)
                 x->keys[j] = x->keys[j + 1];
@@ -286,21 +346,31 @@ static int delete_from_node(BTree *tree, BTreeNode *x, PyObject *key)
             return 1;
         }
 
-        if (x->children[i]->n > t) {
+        if (x->children[i]->n > t)
+        {
             PyObject *pred = get_predecessor(x->children[i]);
             Py_INCREF(pred);
             int rc = delete_from_node(tree, x->children[i], pred);
-            if (rc < 0) { Py_DECREF(pred); return -1; }
+            if (rc < 0)
+            {
+                Py_DECREF(pred);
+                return -1;
+            }
             Py_DECREF(x->keys[i]);
             x->keys[i] = pred;
             return 1;
         }
 
-        if (x->children[i + 1]->n > t) {
+        if (x->children[i + 1]->n > t)
+        {
             PyObject *succ = get_successor(x->children[i + 1]);
             Py_INCREF(succ);
             int rc = delete_from_node(tree, x->children[i + 1], succ);
-            if (rc < 0) { Py_DECREF(succ); return -1; }
+            if (rc < 0)
+            {
+                Py_DECREF(succ);
+                return -1;
+            }
             Py_DECREF(x->keys[i]);
             x->keys[i] = succ;
             return 1;
@@ -310,7 +380,8 @@ static int delete_from_node(BTree *tree, BTreeNode *x, PyObject *key)
         return delete_from_node(tree, x->children[i], key);
     }
 
-    if (x->leaf) return 0;
+    if (x->leaf)
+        return 0;
 
     int descend = i;
     if (x->children[descend]->n <= t)
@@ -324,12 +395,15 @@ static int delete_from_node(BTree *tree, BTreeNode *x, PyObject *key)
 
 int btree_remove(BTree *tree, PyObject *key)
 {
-    if (tree->root->n == 0) return 0;
+    if (tree->root->n == 0)
+        return 0;
 
     int rc = delete_from_node(tree, tree->root, key);
-    if (rc < 0) return -1;
+    if (rc < 0)
+        return -1;
 
-    if (tree->root->n == 0 && !tree->root->leaf) {
+    if (tree->root->n == 0 && !tree->root->leaf)
+    {
         BTreeNode *old_root = tree->root;
         tree->root = old_root->children[0];
         free(old_root->keys);
@@ -337,7 +411,8 @@ int btree_remove(BTree *tree, PyObject *key)
         free(old_root);
     }
 
-    if (rc > 0) tree->size--;
+    if (rc > 0)
+        tree->size--;
     return rc;
 }
 
@@ -351,30 +426,33 @@ BTreePos btree_first(BTree *tree)
     while (!x->leaf)
         x = x->children[0];
     pos.node = x;
-    pos.idx  = 0;
+    pos.idx = 0;
     return pos;
 }
 
 BTreePos btree_next(BTree *tree, BTreePos pos)
 {
     BTreePos result = {NULL, 0};
-    if (!pos.node) return result;
+    if (!pos.node)
+        return result;
 
     BTreeNode *cur = pos.node;
     int ci = pos.idx;
 
-    if (!cur->leaf) {
+    if (!cur->leaf)
+    {
         BTreeNode *x = cur->children[ci + 1];
         while (!x->leaf)
             x = x->children[0];
         result.node = x;
-        result.idx  = 0;
+        result.idx = 0;
         return result;
     }
 
-    if (ci + 1 < cur->n) {
+    if (ci + 1 < cur->n)
+    {
         result.node = cur;
-        result.idx  = ci + 1;
+        result.idx = ci + 1;
         return result;
     }
 
@@ -383,55 +461,66 @@ BTreePos btree_next(BTree *tree, BTreePos pos)
     BTreeNode *ancestor = NULL;
     int ancestor_idx = 0;
 
-    while (x) {
+    while (x)
+    {
         int found;
         int i = node_search(x, cur_key, &found);
-        if (i < 0) return result;
+        if (i < 0)
+            return result;
 
-        if (found) {
-            if (!x->leaf) {
+        if (found)
+        {
+            if (!x->leaf)
+            {
                 BTreeNode *s = x->children[i + 1];
                 while (!s->leaf)
                     s = s->children[0];
                 result.node = s;
-                result.idx  = 0;
+                result.idx = 0;
                 return result;
             }
 
-            if (i + 1 < x->n) {
+            if (i + 1 < x->n)
+            {
                 result.node = x;
-                result.idx  = i + 1;
+                result.idx = i + 1;
                 return result;
             }
-            if (ancestor) {
+            if (ancestor)
+            {
                 result.node = ancestor;
-                result.idx  = ancestor_idx;
+                result.idx = ancestor_idx;
             }
             return result;
         }
 
-        if (i < x->n) {
+        if (i < x->n)
+        {
             ancestor = x;
             ancestor_idx = i;
         }
 
-        if (x->leaf) break;
+        if (x->leaf)
+            break;
         x = x->children[i];
     }
 
-    if (ancestor) {
+    if (ancestor)
+    {
         result.node = ancestor;
-        result.idx  = ancestor_idx;
+        result.idx = ancestor_idx;
     }
     return result;
 }
 
 int btree_height(BTree *tree)
 {
-    if (!tree->root || tree->root->n == 0) return 0;
+    if (!tree->root || tree->root->n == 0)
+        return 0;
     int h = 1;
     BTreeNode *x = tree->root;
-    while (!x->leaf) {
+    while (!x->leaf)
+    {
         x = x->children[0];
         h++;
     }

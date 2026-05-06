@@ -4,14 +4,16 @@
 #include <Python.h>
 #include <stddef.h>
 
-typedef struct BSTNode {
+typedef struct BSTNode
+{
     PyObject *key;
     struct BSTNode *left;
     struct BSTNode *right;
     struct BSTNode *parent;
 } BSTNode;
 
-typedef struct {
+typedef struct
+{
     BSTNode *root;
     size_t size;
 } BST;

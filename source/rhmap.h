@@ -14,10 +14,11 @@
  * Load factor is kept below 0.75; table size is always a power of two.
  */
 
-#define RHMAP_EMPTY   0
-#define RHMAP_USED    1
+#define RHMAP_EMPTY 0
+#define RHMAP_USED 1
 
-typedef struct {
+typedef struct
+{
     PyObject *key;
     PyObject *value;
     size_t hash;
@@ -25,7 +26,8 @@ typedef struct {
     int state;
 } RHSlot;
 
-typedef struct {
+typedef struct
+{
     RHSlot *slots;
     size_t capacity;
     size_t size;

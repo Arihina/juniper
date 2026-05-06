@@ -8,10 +8,10 @@ static RBNode *node_create(RBTree *tree, PyObject *key)
         return NULL;
 
     Py_INCREF(key);
-    n->key    = key;
-    n->color  = RB_RED;
-    n->left   = tree->nil;
-    n->right  = tree->nil;
+    n->key = key;
+    n->color = RB_RED;
+    n->left = tree->nil;
+    n->right = tree->nil;
     n->parent = tree->nil;
     return n;
 }
@@ -67,15 +67,16 @@ RBTree *rbtree_create(void)
         return NULL;
 
     tree->nil = malloc(sizeof(RBNode));
-    if (!tree->nil) {
+    if (!tree->nil)
+    {
         free(tree);
         return NULL;
     }
 
-    tree->nil->color  = RB_BLACK;
-    tree->nil->key    = NULL;
-    tree->nil->left   = NULL;
-    tree->nil->right  = NULL;
+    tree->nil->color = RB_BLACK;
+    tree->nil->key = NULL;
+    tree->nil->left = NULL;
+    tree->nil->right = NULL;
     tree->nil->parent = NULL;
 
     tree->root = tree->nil;
@@ -85,7 +86,8 @@ RBTree *rbtree_create(void)
 
 void rbtree_free(RBTree *tree)
 {
-    if (!tree) return;
+    if (!tree)
+        return;
     node_free_recursive(tree, tree->root);
     free(tree->nil);
     free(tree);
@@ -93,16 +95,22 @@ void rbtree_free(RBTree *tree)
 
 static void insert_fixup(RBTree *tree, RBNode *z)
 {
-    while (z->parent->color == RB_RED) {
-        if (z->parent == z->parent->parent->left) {
+    while (z->parent->color == RB_RED)
+    {
+        if (z->parent == z->parent->parent->left)
+        {
             RBNode *y = z->parent->parent->right;
-            if (y->color == RB_RED) {
+            if (y->color == RB_RED)
+            {
                 z->parent->color = RB_BLACK;
                 y->color = RB_BLACK;
                 z->parent->parent->color = RB_RED;
                 z = z->parent->parent;
-            } else {
-                if (z == z->parent->right) {
+            }
+            else
+            {
+                if (z == z->parent->right)
+                {
                     z = z->parent;
                     rotate_left(tree, z);
                 }
@@ -110,15 +118,21 @@ static void insert_fixup(RBTree *tree, RBNode *z)
                 z->parent->parent->color = RB_RED;
                 rotate_right(tree, z->parent->parent);
             }
-        } else {
+        }
+        else
+        {
             RBNode *y = z->parent->parent->left;
-            if (y->color == RB_RED) {
+            if (y->color == RB_RED)
+            {
                 z->parent->color = RB_BLACK;
                 y->color = RB_BLACK;
                 z->parent->parent->color = RB_RED;
                 z = z->parent->parent;
-            } else {
-                if (z == z->parent->left) {
+            }
+            else
+            {
+                if (z == z->parent->left)
+                {
                     z = z->parent;
                     rotate_right(tree, z);
                 }
@@ -136,23 +150,31 @@ int rbtree_insert(RBTree *tree, PyObject *key)
     RBNode *y = tree->nil;
     RBNode *x = tree->root;
 
-    while (x != tree->nil) {
+    while (x != tree->nil)
+    {
         y = x;
         int cmp = PyObject_RichCompareBool(key, x->key, Py_LT);
-        if (cmp < 0) return -1;  /* comparison error */
-        if (cmp) {
+        if (cmp < 0)
+            return -1; /* comparison error */
+        if (cmp)
+        {
             x = x->left;
-        } else {
+        }
+        else
+        {
             /* check equality */
             int eq = PyObject_RichCompareBool(key, x->key, Py_EQ);
-            if (eq < 0) return -1;
-            if (eq) return 0;  /* duplicate */
+            if (eq < 0)
+                return -1;
+            if (eq)
+                return 0; /* duplicate */
             x = x->right;
         }
     }
 
     RBNode *z = node_create(tree, key);
-    if (!z) {
+    if (!z)
+    {
         PyErr_NoMemory();
         return -1;
     }
@@ -160,9 +182,11 @@ int rbtree_insert(RBTree *tree, PyObject *key)
     z->parent = y;
     if (y == tree->nil)
         tree->root = z;
-    else {
+    else
+    {
         int cmp = PyObject_RichCompareBool(key, y->key, Py_LT);
-        if (cmp < 0) {
+        if (cmp < 0)
+        {
             Py_DECREF(key);
             free(z);
             return -1;
@@ -181,15 +205,22 @@ int rbtree_insert(RBTree *tree, PyObject *key)
 int rbtree_contains(RBTree *tree, PyObject *key)
 {
     RBNode *x = tree->root;
-    while (x != tree->nil) {
+    while (x != tree->nil)
+    {
         int cmp = PyObject_RichCompareBool(key, x->key, Py_LT);
-        if (cmp < 0) return -1;
-        if (cmp) {
+        if (cmp < 0)
+            return -1;
+        if (cmp)
+        {
             x = x->left;
-        } else {
+        }
+        else
+        {
             int eq = PyObject_RichCompareBool(key, x->key, Py_EQ);
-            if (eq < 0) return -1;
-            if (eq) return 1;
+            if (eq < 0)
+                return -1;
+            if (eq)
+                return 1;
             x = x->right;
         }
     }
@@ -208,7 +239,8 @@ RBNode *rbtree_successor(RBTree *tree, RBNode *node)
     if (node->right != tree->nil)
         return rbtree_minimum(tree, node->right);
     RBNode *y = node->parent;
-    while (y != tree->nil && node == y->right) {
+    while (y != tree->nil && node == y->right)
+    {
         node = y;
         y = y->parent;
     }
@@ -228,20 +260,27 @@ static void transplant(RBTree *tree, RBNode *u, RBNode *v)
 
 static void delete_fixup(RBTree *tree, RBNode *x)
 {
-    while (x != tree->root && x->color == RB_BLACK) {
-        if (x == x->parent->left) {
+    while (x != tree->root && x->color == RB_BLACK)
+    {
+        if (x == x->parent->left)
+        {
             RBNode *w = x->parent->right;
-            if (w->color == RB_RED) {
+            if (w->color == RB_RED)
+            {
                 w->color = RB_BLACK;
                 x->parent->color = RB_RED;
                 rotate_left(tree, x->parent);
                 w = x->parent->right;
             }
-            if (w->left->color == RB_BLACK && w->right->color == RB_BLACK) {
+            if (w->left->color == RB_BLACK && w->right->color == RB_BLACK)
+            {
                 w->color = RB_RED;
                 x = x->parent;
-            } else {
-                if (w->right->color == RB_BLACK) {
+            }
+            else
+            {
+                if (w->right->color == RB_BLACK)
+                {
                     w->left->color = RB_BLACK;
                     w->color = RB_RED;
                     rotate_right(tree, w);
@@ -253,19 +292,26 @@ static void delete_fixup(RBTree *tree, RBNode *x)
                 rotate_left(tree, x->parent);
                 x = tree->root;
             }
-        } else {
+        }
+        else
+        {
             RBNode *w = x->parent->left;
-            if (w->color == RB_RED) {
+            if (w->color == RB_RED)
+            {
                 w->color = RB_BLACK;
                 x->parent->color = RB_RED;
                 rotate_right(tree, x->parent);
                 w = x->parent->left;
             }
-            if (w->right->color == RB_BLACK && w->left->color == RB_BLACK) {
+            if (w->right->color == RB_BLACK && w->left->color == RB_BLACK)
+            {
                 w->color = RB_RED;
                 x = x->parent;
-            } else {
-                if (w->left->color == RB_BLACK) {
+            }
+            else
+            {
+                if (w->left->color == RB_BLACK)
+                {
                     w->right->color = RB_BLACK;
                     w->color = RB_RED;
                     rotate_left(tree, w);
@@ -285,15 +331,22 @@ static void delete_fixup(RBTree *tree, RBNode *x)
 static RBNode *find_node(RBTree *tree, PyObject *key)
 {
     RBNode *x = tree->root;
-    while (x != tree->nil) {
+    while (x != tree->nil)
+    {
         int cmp = PyObject_RichCompareBool(key, x->key, Py_LT);
-        if (cmp < 0) return NULL;  /* error */
-        if (cmp) {
+        if (cmp < 0)
+            return NULL; /* error */
+        if (cmp)
+        {
             x = x->left;
-        } else {
+        }
+        else
+        {
             int eq = PyObject_RichCompareBool(key, x->key, Py_EQ);
-            if (eq < 0) return NULL;
-            if (eq) return x;
+            if (eq < 0)
+                return NULL;
+            if (eq)
+                return x;
             x = x->right;
         }
     }
@@ -303,26 +356,36 @@ static RBNode *find_node(RBTree *tree, PyObject *key)
 int rbtree_remove(RBTree *tree, PyObject *key)
 {
     RBNode *z = find_node(tree, key);
-    if (!z) return -1;
-    if (z == tree->nil) return 0;
+    if (!z)
+        return -1;
+    if (z == tree->nil)
+        return 0;
 
     RBNode *y = z;
     RBNode *x;
     RBColor y_orig_color = y->color;
 
-    if (z->left == tree->nil) {
+    if (z->left == tree->nil)
+    {
         x = z->right;
         transplant(tree, z, z->right);
-    } else if (z->right == tree->nil) {
+    }
+    else if (z->right == tree->nil)
+    {
         x = z->left;
         transplant(tree, z, z->left);
-    } else {
+    }
+    else
+    {
         y = rbtree_minimum(tree, z->right);
         y_orig_color = y->color;
         x = y->right;
-        if (y->parent == z) {
+        if (y->parent == z)
+        {
             x->parent = y;
-        } else {
+        }
+        else
+        {
             transplant(tree, y, y->right);
             y->right = z->right;
             y->right->parent = y;

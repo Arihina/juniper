@@ -1,11 +1,11 @@
 #include "slist.h"
 #include <stdlib.h>
 
-
 SList *slist_create(void)
 {
     SList *list = malloc(sizeof(SList));
-    if (!list) return NULL;
+    if (!list)
+        return NULL;
     list->head = NULL;
     list->tail = NULL;
     list->size = 0;
@@ -15,7 +15,8 @@ SList *slist_create(void)
 void slist_clear(SList *list)
 {
     SListNode *cur = list->head;
-    while (cur) {
+    while (cur)
+    {
         SListNode *next = cur->next;
         Py_DECREF(cur->value);
         free(cur);
@@ -28,27 +29,28 @@ void slist_clear(SList *list)
 
 void slist_free(SList *list)
 {
-    if (!list) return;
+    if (!list)
+        return;
     slist_clear(list);
     free(list);
 }
 
-
 static SListNode *node_create(PyObject *value)
 {
     SListNode *node = malloc(sizeof(SListNode));
-    if (!node) return NULL;
+    if (!node)
+        return NULL;
     Py_INCREF(value);
     node->value = value;
-    node->next  = NULL;
+    node->next = NULL;
     return node;
 }
-
 
 int slist_push_front(SList *list, PyObject *value)
 {
     SListNode *node = node_create(value);
-    if (!node) return -1;
+    if (!node)
+        return -1;
     node->next = list->head;
     list->head = node;
     if (!list->tail)
@@ -60,7 +62,8 @@ int slist_push_front(SList *list, PyObject *value)
 int slist_push_back(SList *list, PyObject *value)
 {
     SListNode *node = node_create(value);
-    if (!node) return -1;
+    if (!node)
+        return -1;
     if (list->tail)
         list->tail->next = node;
     else
@@ -78,7 +81,8 @@ int slist_insert(SList *list, size_t index, PyObject *value)
         return slist_push_back(list, value);
 
     SListNode *node = node_create(value);
-    if (!node) return -1;
+    if (!node)
+        return -1;
 
     SListNode *prev = list->head;
     for (size_t i = 0; i < index - 1; i++)
@@ -92,7 +96,8 @@ int slist_insert(SList *list, size_t index, PyObject *value)
 
 PyObject *slist_pop_front(SList *list)
 {
-    if (!list->head) return NULL;
+    if (!list->head)
+        return NULL;
 
     SListNode *node = list->head;
     PyObject *value = node->value;
@@ -108,7 +113,8 @@ PyObject *slist_pop_front(SList *list)
 
 PyObject *slist_pop_back(SList *list)
 {
-    if (!list->head) return NULL;
+    if (!list->head)
+        return NULL;
 
     if (list->head == list->tail)
         return slist_pop_front(list);
@@ -130,12 +136,15 @@ PyObject *slist_pop_back(SList *list)
 int slist_remove(SList *list, PyObject *value)
 {
     SListNode *prev = NULL;
-    SListNode *cur  = list->head;
+    SListNode *cur = list->head;
 
-    while (cur) {
+    while (cur)
+    {
         int cmp = PyObject_RichCompareBool(cur->value, value, Py_EQ);
-        if (cmp < 0) return -1;
-        if (cmp) {
+        if (cmp < 0)
+            return -1;
+        if (cmp)
+        {
             if (prev)
                 prev->next = cur->next;
             else
@@ -157,7 +166,8 @@ int slist_remove(SList *list, PyObject *value)
 
 PyObject *slist_get(SList *list, size_t index)
 {
-    if (index >= list->size) return NULL;
+    if (index >= list->size)
+        return NULL;
     SListNode *cur = list->head;
     for (size_t i = 0; i < index; i++)
         cur = cur->next;
@@ -168,10 +178,13 @@ PyObject *slist_get(SList *list, size_t index)
 int slist_contains(SList *list, PyObject *value)
 {
     SListNode *cur = list->head;
-    while (cur) {
+    while (cur)
+    {
         int cmp = PyObject_RichCompareBool(cur->value, value, Py_EQ);
-        if (cmp < 0) return -1;
-        if (cmp) return 1;
+        if (cmp < 0)
+            return -1;
+        if (cmp)
+            return 1;
         cur = cur->next;
     }
     return 0;
@@ -181,10 +194,13 @@ Py_ssize_t slist_index(SList *list, PyObject *value)
 {
     SListNode *cur = list->head;
     Py_ssize_t idx = 0;
-    while (cur) {
+    while (cur)
+    {
         int cmp = PyObject_RichCompareBool(cur->value, value, Py_EQ);
-        if (cmp < 0) return -2;
-        if (cmp) return idx;
+        if (cmp < 0)
+            return -2;
+        if (cmp)
+            return idx;
         cur = cur->next;
         idx++;
     }
@@ -193,12 +209,14 @@ Py_ssize_t slist_index(SList *list, PyObject *value)
 
 void slist_reverse(SList *list)
 {
-    if (list->size <= 1) return;
+    if (list->size <= 1)
+        return;
     list->tail = list->head;
 
     SListNode *prev = NULL;
-    SListNode *cur  = list->head;
-    while (cur) {
+    SListNode *cur = list->head;
+    while (cur)
+    {
         SListNode *next = cur->next;
         cur->next = prev;
         prev = cur;

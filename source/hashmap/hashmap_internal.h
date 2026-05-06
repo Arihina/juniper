@@ -2,7 +2,8 @@
 #include "hashmap.h"
 #include "bucket.h"
 
-struct hashmap {
+struct hashmap
+{
     size_t size;
     size_t cap;
     hash_fn hash;

@@ -16,10 +16,11 @@
  * bucket size bounded.
  */
 
-#define BTHM_DEFAULT_NBUCKETS  16
-#define BTHM_BUCKET_ORDER       8
+#define BTHM_DEFAULT_NBUCKETS 16
+#define BTHM_BUCKET_ORDER 8
 
-typedef struct {
+typedef struct
+{
     BTreeMap **buckets;
     size_t nbuckets;
     size_t size;
