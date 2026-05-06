@@ -4,13 +4,15 @@
 #include <Python.h>
 #include <stddef.h>
 
-typedef struct DListNode {
+typedef struct DListNode
+{
     PyObject *value;
     struct DListNode *prev;
     struct DListNode *next;
 } DListNode;
 
-typedef struct {
+typedef struct
+{
     DListNode *head;
     DListNode *tail;
     size_t size;
@@ -35,6 +37,12 @@ Py_ssize_t dlist_index(DList *list, PyObject *value);
 void dlist_clear(DList *list);
 void dlist_reverse(DList *list);
 void dlist_move_to_front(DList *list, DListNode *node);
+void dlist_move_to_back(DList *list, DListNode *node);
+
+DListNode *dlist_push_front_node(DList *list, PyObject *value);
+DListNode *dlist_push_back_node(DList *list, PyObject *value);
+
+void dlist_unlink_keep(DList *list, DListNode *node);
 
 static inline int dlist_is_empty(DList *list) { return list->size == 0; }
 static inline size_t dlist_len(DList *list) { return list->size; }

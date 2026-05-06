@@ -20,17 +20,26 @@
 
 | Method | Signature | Description |
 |---|---|---|
+| `back_node` | `()` | Return handle to tail node, or None if empty. |
 | `clear` | `()` | Remove all elements. |
+| `front_node` | `()` | Return handle to head node, or None if empty. |
 | `index` | `()` | Return index of first occurrence; raise ValueError if missing. |
 | `insert` | `()` | Insert an element at the given index. |
 | `is_empty` | `()` | Return True if list is empty. |
-| `move_to_front` | `()` | Move element at given index to the front in O(1). |
+| `move_to_back_node` | `()` | O(1) move node handle to back. |
+| `move_to_front` | `()` | Move element at given index to the front. |
+| `move_to_front_node` | `()` | O(1) move node handle to front. |
 | `pop_back` | `()` | Remove and return the last element. |
+| `pop_back_node` | `()` | Unlink tail node and return its (detached) handle. |
 | `pop_front` | `()` | Remove and return the first element. |
+| `pop_front_node` | `()` | Unlink head node and return its (detached) handle. |
 | `push_back` | `()` | Add an element to the back. |
+| `push_back_node` | `()` | Insert value at back, return DListNode handle. |
 | `push_front` | `()` | Add an element to the front. |
+| `push_front_node` | `()` | Insert value at front, return DListNode handle. |
 | `remove` | `()` | Remove first occurrence; raise ValueError if missing. |
 | `reverse` | `()` | Reverse the list in-place. |
+| `unlink_node` | `()` | Unlink node by handle, return its value. Handle becomes detached. |
 
 ## HashMap
 
