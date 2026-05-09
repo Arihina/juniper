@@ -75,6 +75,7 @@
 | `clear` | `()` | Remove all elements. |
 | `contains` | `()` | Return True if element is in the set. |
 | `discard` | `()` | Remove an element if present (no error if missing). |
+| `peek_min` | `()` | Return the smallest element without removing it. |
 | `pop` | `()` | Remove and return the smallest element. |
 | `remove` | `()` | Remove an element; raise KeyError if missing. |
 
@@ -87,6 +88,7 @@
 | `contains` | `()` | Return True if element is in the set. |
 | `discard` | `()` | Remove an element if present (no error if missing). |
 | `height` | `()` | Return the height of the AVL tree. |
+| `peek_min` | `()` | Return the smallest element without removing it. |
 | `pop` | `()` | Remove and return the smallest element. |
 | `remove` | `()` | Remove an element; raise KeyError if missing. |
 
@@ -100,6 +102,7 @@
 | `discard` | `()` | Remove an element if present (no error if missing). |
 | `height` | `()` | Return the height of the B-tree. |
 | `order` | `()` | Return the order (branching factor) of the B-tree. |
+| `peek_min` | `()` | Return the smallest element without removing it. |
 | `pop` | `()` | Remove and return the smallest element. |
 | `remove` | `()` | Remove an element; raise KeyError if missing. |
 
@@ -140,6 +143,7 @@
 | `contains` | `()` | Return True if element is in the set. |
 | `discard` | `()` | Remove an element if present (no error if missing). |
 | `height` | `()` | Return the height of the tree. |
+| `peek_min` | `()` | Return the smallest element without removing it. |
 | `pop` | `()` | Remove and return the smallest element. |
 | `remove` | `()` | Remove an element; raise KeyError if missing. |
 
