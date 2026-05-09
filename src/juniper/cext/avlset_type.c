@@ -212,6 +212,19 @@ static PyObject *PyAVLSet_pop(PyAVLSetObject *self,
     return key;
 }
 
+static PyObject *PyAVLSet_peek_min(PyAVLSetObject *self,
+                                   PyObject *Py_UNUSED(ignored))
+{
+    if (self->tree->size == 0)
+    {
+        PyErr_SetString(PyExc_KeyError, "peek_min on empty AVLSet");
+        return NULL;
+    }
+    AVLNode *min = avltree_minimum(self->tree, self->tree->root);
+    Py_INCREF(min->key);
+    return min->key;
+}
+
 static PyObject *PyAVLSet_height(PyAVLSetObject *self,
                                  PyObject *Py_UNUSED(ignored))
 {
@@ -233,6 +246,8 @@ static PyMethodDef PyAVLSet_methods[] = {
      "Remove all elements."},
     {"pop", (PyCFunction)PyAVLSet_pop, METH_NOARGS,
      "Remove and return the smallest element."},
+    {"peek_min", (PyCFunction)PyAVLSet_peek_min, METH_NOARGS,
+     "Return the smallest element without removing it."},
     {"height", (PyCFunction)PyAVLSet_height, METH_NOARGS,
      "Return the height of the AVL tree."},
     {NULL}};
