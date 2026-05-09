@@ -216,6 +216,19 @@ static PyObject *PyRBSet_pop(PyRBSetObject *self,
     return key;
 }
 
+static PyObject *PyRBSet_peek_min(PyRBSetObject *self,
+                                  PyObject *Py_UNUSED(ignored))
+{
+    if (self->tree->size == 0)
+    {
+        PyErr_SetString(PyExc_KeyError, "peek_min on empty RBSet");
+        return NULL;
+    }
+    RBNode *min = rbtree_minimum(self->tree, self->tree->root);
+    Py_INCREF(min->key);
+    return min->key;
+}
+
 static PyObject *PyRBSet_iter(PyRBSetObject *self)
 {
     if (PyType_Ready(&PyRBSetIterType) < 0)
@@ -332,6 +345,8 @@ static PyMethodDef PyRBSet_methods[] = {
      "Remove all elements."},
     {"pop", (PyCFunction)PyRBSet_pop, METH_NOARGS,
      "Remove and return the smallest element."},
+    {"peek_min", (PyCFunction)PyRBSet_peek_min, METH_NOARGS,
+     "Return the smallest element without removing it."},
     {NULL}};
 
 static PySequenceMethods PyRBSet_as_sequence = {
