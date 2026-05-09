@@ -229,6 +229,19 @@ static PyObject *PyBTreeSet_pop(PyBTreeSetObject *self,
     return key;
 }
 
+static PyObject *PyBTreeSet_peek_min(PyBTreeSetObject *self,
+                                     PyObject *Py_UNUSED(ignored))
+{
+    if (self->tree->size == 0)
+    {
+        PyErr_SetString(PyExc_KeyError, "peek_min on empty BTreeSet");
+        return NULL;
+    }
+    BTreePos first = btree_first(self->tree);
+    Py_INCREF(first.node->keys[first.idx]);
+    return first.node->keys[first.idx];
+}
+
 static PyObject *PyBTreeSet_height(PyBTreeSetObject *self,
                                    PyObject *Py_UNUSED(ignored))
 {
@@ -254,6 +267,8 @@ static PyMethodDef PyBTreeSet_methods[] = {
      "Remove all elements."},
     {"pop", (PyCFunction)PyBTreeSet_pop, METH_NOARGS,
      "Remove and return the smallest element."},
+    {"peek_min", (PyCFunction)PyBTreeSet_peek_min, METH_NOARGS,
+     "Return the smallest element without removing it."},
     {"height", (PyCFunction)PyBTreeSet_height, METH_NOARGS,
      "Return the height of the B-tree."},
     {"order", (PyCFunction)PyBTreeSet_order, METH_NOARGS,
