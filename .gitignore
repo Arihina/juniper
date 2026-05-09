@@ -3,6 +3,7 @@ _native/
 .vscode/
 src/juniper.egg-info
 src/juniper/__pycache__
+__pycache__/
 src/juniper/_native.cpython-311-x86_64-linux-gnu.so
 main.c
 *.so
