@@ -211,6 +211,19 @@ static PyObject *PyBSTSet_pop(PyBSTSetObject *self,
     return key;
 }
 
+static PyObject *PyBSTSet_peek_min(PyBSTSetObject *self,
+                                   PyObject *Py_UNUSED(ignored))
+{
+    if (self->tree->size == 0)
+    {
+        PyErr_SetString(PyExc_KeyError, "peek_min on empty BSTSet");
+        return NULL;
+    }
+    BSTNode *min = bst_minimum(self->tree, self->tree->root);
+    Py_INCREF(min->key);
+    return min->key;
+}
+
 static PyObject *PyBSTSet_height(PyBSTSetObject *self,
                                  PyObject *Py_UNUSED(ignored))
 {
@@ -230,6 +243,8 @@ static PyMethodDef PyBSTSet_methods[] = {
      "Remove all elements."},
     {"pop", (PyCFunction)PyBSTSet_pop, METH_NOARGS,
      "Remove and return the smallest element."},
+    {"peek_min", (PyCFunction)PyBSTSet_peek_min, METH_NOARGS,
+     "Return the smallest element without removing it."},
     {"height", (PyCFunction)PyBSTSet_height, METH_NOARGS,
      "Return the height of the tree."},
     {NULL}};
