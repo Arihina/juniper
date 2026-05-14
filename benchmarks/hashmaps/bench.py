@@ -23,6 +23,7 @@ Juniper Hash Map Benchmark Suite
 import argparse
 import gc
 import os
+from pathlib import Path
 import random
 import resource
 import statistics
@@ -267,6 +268,15 @@ def part1_operations(N):
                          f"{t / ops_count * 1_000_000:.2f} мкс"))
         print_table(["Структура", "Время", "Throughput", "мкс/op"], rows)
 
+        md_headers = ["Структура", "Время", "Throughput", "мкс/op"]
+
+        write_markdown_report(
+            "part1_operations.md",
+            f"{test_name} (N={N:,})",
+            md_headers,
+            rows
+        )
+
 
 # ================================================================
 #  Part 2: Scaling
@@ -287,6 +297,12 @@ def part2_scaling(sizes):
             row.append(fmt_ms(bench_insert_rnd(cls, n, k)))
         rows.append(row)
     print_table(headers, rows)
+    write_markdown_report(
+        "part2_scaling.md",
+        "Random insert (мс)",
+        headers,
+        rows
+    )
 
     print(f"\n  --- Random lookup hit (мс) ---")
     rows = []
@@ -298,6 +314,12 @@ def part2_scaling(sizes):
             row.append(fmt_ms(bench_lookup_hit(cls, n, k, lk)))
         rows.append(row)
     print_table(headers, rows)
+    write_markdown_report(
+        "part2_scaling.md",
+        "Random lookup hit (мс)",
+        headers,
+        rows
+    )
 
     print(f"\n  --- Insert + Delete all (мс) ---")
     rows = []
@@ -308,6 +330,12 @@ def part2_scaling(sizes):
             row.append(fmt_ms(bench_delete(cls, n, k)))
         rows.append(row)
     print_table(headers, rows)
+    write_markdown_report(
+        "part2_scaling.md",
+        "Insert + Delete all (мс)",
+        headers,
+        rows
+    )
 
 
 # ================================================================
@@ -346,6 +374,12 @@ def part3_latency(N):
             f"{lats[min(int(len(lats)*0.999), len(lats)-1)]:.2f}μs",
         ))
     print_table(headers, rows)
+    write_markdown_report(
+        "part3_latency.md",
+        f"Latency percentiles (N={N:,})",
+        headers,
+        rows
+    )
 
 
 # ================================================================
@@ -381,7 +415,7 @@ def part4_memory(sizes):
 # ================================================================
 
 def part5_patterns(N):
-    print_header(f"Часть 5: Влияние паттерна ключей (N={N:,})")
+    print_header(f"Часть 4: Влияние паттерна ключей (N={N:,})")
     print("""
   Sequential — 0,1,2,...N      Random — перемешанные
   Zipf       — 20% ключей = 80% обращений
@@ -400,6 +434,12 @@ def part5_patterns(N):
             f"{fmt_ms(bench_lookup_hit(cls, N, keys, lookups))} мс",
             f"{fmt_ms(bench_lookup_zipf(cls, N, keys, zipf_lk))} мс"))
     print_table(headers, rows)
+    write_markdown_report(
+        "part5_patterns.md",
+        f"Key patterns impact (N={N:,})",
+        headers,
+        rows
+    )
 
 
 # ================================================================
@@ -410,44 +450,44 @@ def part6_scenarios():
     print_header("Часть 6: Сценарии кэширования")
     print("""
   ┌───────────────────────────────────────────────────────────────────┐
-  │ 1. LRU-кэш (веб-сервер, page cache)                             │
+  │ 1. LRU-кэш (веб-сервер, page cache)                               │
   ├───────────────────────────────────────────────────────────────────┤
-  │ Профиль:  ~90% lookup, ~5% insert, ~5% evict                    │
-  │ Ключи:    строки (URL, session_id), Zipf                        │
-  │ Критично: p99 lookup, throughput на горячих ключах               │
-  │ Выбор:    SwissTable / RHMap + DList (move_to_front O(1))        │
-  │ Метрики:  p99 < 5μs, throughput > 5M ops/s                      │
+  │ Профиль:  ~90% lookup, ~5% insert, ~5% evict                      │
+  │ Ключи:    строки (URL, session_id), Zipf                          │
+  │ Критично: p99 lookup, throughput на горячих ключах                │
+  │ Выбор:    SwissTable / RHMap + DList (move_to_front O(1))         │
+  │ Метрики:  p99 < 5μs, throughput > 5M ops/s                        │
   └───────────────────────────────────────────────────────────────────┘
   ┌───────────────────────────────────────────────────────────────────┐
-  │ 2. Write-heavy (счётчики, rate limiter)                          │
+  │ 2. Write-heavy (счётчики, rate limiter)                           │
   ├───────────────────────────────────────────────────────────────────┤
-  │ Профиль:  ~30% lookup, ~50% update, ~20% insert                 │
-  │ Критично: throughput update, стабильность при resize             │
-  │ Выбор:    RHMap (предсказуемый resize, backward-shift delete)    │
-  │ Метрики:  update > 3M ops/s, resize stall < 10ms                │
+  │ Профиль:  ~30% lookup, ~50% update, ~20% insert                   │
+  │ Критично: throughput update, стабильность при resize              │
+  │ Выбор:    RHMap (предсказуемый resize, backward-shift delete)     │
+  │ Метрики:  update > 3M ops/s, resize stall < 10ms                  │
   └───────────────────────────────────────────────────────────────────┘
   ┌───────────────────────────────────────────────────────────────────┐
-  │ 3. TTL-кэш (DNS, session store)                                 │
+  │ 3. TTL-кэш (DNS, session store)                                   │
   ├───────────────────────────────────────────────────────────────────┤
-  │ Профиль:  ~70% lookup, ~15% insert, ~15% delete (expiry)        │
-  │ Критично: delete без деградации, эффективная purge               │
-  │ Выбор:    RHMap (нет tombstone) + SkipListSet (peek_min purge)   │
-  │ Метрики:  delete > 2M ops/s, lookup стабилен после 50% delete    │
+  │ Профиль:  ~70% lookup, ~15% insert, ~15% delete (expiry)          │
+  │ Критично: delete без деградации, эффективная purge                │
+  │ Выбор:    RHMap (нет tombstone) + SkipListSet (peek_min purge)    │
+  │ Метрики:  delete > 2M ops/s, lookup стабилен после 50% delete     │
   └───────────────────────────────────────────────────────────────────┘
   ┌───────────────────────────────────────────────────────────────────┐
-  │ 4. Read-only lookup (конфиг, feature flags)                      │
+  │ 4. Read-only lookup (конфиг, feature flags)                       │
   ├───────────────────────────────────────────────────────────────────┤
-  │ Профиль:  ~100% lookup после загрузки                            │
-  │ Критично: абсолютная скорость lookup, предсказуемый p99          │
-  │ Выбор:    SwissTable (control byte → быстрый early-exit)         │
-  │ Метрики:  p50 < 0.5μs, p99 < 2μs, > 8M ops/s                   │
+  │ Профиль:  ~100% lookup после загрузки                             │
+  │ Критично: абсолютная скорость lookup, предсказуемый p99           │
+  │ Выбор:    SwissTable (control byte → быстрый early-exit)          │
+  │ Метрики:  p50 < 0.5μs, p99 < 2μs, > 8M ops/s                      │
   └───────────────────────────────────────────────────────────────────┘
   ┌───────────────────────────────────────────────────────────────────┐
-  │ 5. Hash-flood / DoS (adversarial коллизии)                       │
+  │ 5. Hash-flood / DoS (adversarial коллизии)                        │
   ├───────────────────────────────────────────────────────────────────┤
-  │ Критично: worst-case per-op не O(n)                              │
-  │ Выбор:    BTHashMap — O(log k) на коллизию (B-tree bucket)       │
-  │ Метрики:  single insert < 100μs при 10к коллизий                 │
+  │ Критично: worst-case per-op не O(n)                               │
+  │ Выбор:    BTHashMap — O(log k) на коллизию (B-tree bucket)        │
+  │ Метрики:  single insert < 100μs при 10к коллизий                  │
   └───────────────────────────────────────────────────────────────────┘
 """)
 
@@ -500,6 +540,40 @@ def part7_guide():
 
 
 # ================================================================
+#  Markdown reporting
+# ================================================================
+
+REPORT_DIR = Path("reports")
+REPORT_DIR.mkdir(exist_ok=True)
+
+
+def markdown_table(headers, rows):
+    lines = []
+
+    lines.append("| " + " | ".join(map(str, headers)) + " |")
+    lines.append("| " + " | ".join("---" for _ in headers) + " |")
+
+    for row in rows:
+        lines.append("| " + " | ".join(map(str, row)) + " |")
+
+    return "\n".join(lines)
+
+
+def write_markdown_report(filename, title, headers, rows, extra_text=None):
+    path = REPORT_DIR / filename
+
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(f"# {title}\n\n")
+
+        if extra_text:
+            f.write(extra_text.strip() + "\n\n")
+
+        f.write(markdown_table(headers, rows))
+        f.write("\n\n")
+
+    # print(f"  [markdown] saved -> {path}")
+
+# ================================================================
 #  Entry point
 # ================================================================
 
@@ -521,14 +595,17 @@ def main():
     print("Juniper Hash Map Benchmark Suite")
     print(f"Python {sys.version.split()[0]}, N={N:,}, sizes={sizes}")
 
-    part1_operations(N)
+    for n in sizes:
+        part1_operations(n)
     part2_scaling(sizes)
-    part3_latency(N)
-    if not args.no_memory:
-        part4_memory(sizes)
-    part5_patterns(N)
-    part6_scenarios()
-    part7_guide()
+    for n in sizes:
+        part3_latency(n)
+    # if not args.no_memory:
+    #     part4_memory(sizes)
+    for n in sizes:
+        part5_patterns(n)
+    # part6_scenarios()
+    # part7_guide()
 
     print("\n" + "=" * 78)
     print("  Benchmark complete.")

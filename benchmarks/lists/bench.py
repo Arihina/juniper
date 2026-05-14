@@ -16,6 +16,7 @@ Juniper List Benchmark Suite
 
 import argparse
 import gc
+from pathlib import Path
 import random
 import resource
 import statistics
@@ -249,6 +250,40 @@ def bench_dlist_reversed_iter(n):
 
 
 # ================================================================
+#  Markdown reporting
+# ================================================================
+
+REPORT_DIR = Path("reports")
+REPORT_DIR.mkdir(exist_ok=True)
+
+
+def markdown_table(headers, rows):
+    lines = []
+
+    lines.append("| " + " | ".join(map(str, headers)) + " |")
+    lines.append("| " + " | ".join("---" for _ in headers) + " |")
+
+    for row in rows:
+        lines.append("| " + " | ".join(map(str, row)) + " |")
+
+    return "\n".join(lines)
+
+
+def write_markdown_report(filename, title, headers, rows, extra_text=None):
+    path = REPORT_DIR / filename
+
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(f"# {title}\n\n")
+
+        if extra_text:
+            f.write(extra_text.strip() + "\n\n")
+
+        f.write(markdown_table(headers, rows))
+        f.write("\n\n")
+
+    # print(f"  [markdown] saved -> {path}")
+
+# ================================================================
 #  Part 1: Per-operation benchmarks
 # ================================================================
 
@@ -275,6 +310,14 @@ def part1(N):
             rows.append((name, f"{fmt_ms(t)} мс", f"{fmt_ops(ops, t)} ops/s",
                          f"{t/ops*1e6:.2f} мкс"))
         print_table(["Структура", "Время", "Throughput", "мкс/op"], rows)
+        md_headers = ["Структура", "Время", "Throughput", "мкс/op"]
+
+        write_markdown_report(
+            "part1_operations.md",
+            f"{test_name} (N={N:,})",
+            md_headers,
+            rows
+        )
 
     # contains (O(n) for all — small sample)
     print(f"\n  --- Contains ×{len(lookups_few)} (linear scan) ---")
@@ -284,6 +327,12 @@ def part1(N):
         rows.append((name, f"{fmt_ms(t)} мс", f"{fmt_ops(len(lookups_few), t)} ops/s",
                      f"{t/len(lookups_few)*1e6:.2f} мкс"))
     print_table(["Структура", "Время", "Throughput", "мкс/op"], rows)
+    write_markdown_report(
+        "part1_operations.md",
+        f"Contains linear scan ×{len(lookups_few)} (N={N:,})",
+        ["Структура", "Время", "Throughput", "мкс/op"],
+        rows
+    )
 
     # Index access
     print(f"\n  --- Index access [0], [100], [200], ... ---")
@@ -293,6 +342,12 @@ def part1(N):
         rows.append((name, f"{fmt_ms(t)} мс", f"{fmt_ops(cnt, t)} ops/s",
                      f"{t/cnt*1e6:.2f} мкс"))
     print_table(["Структура", "Время", "Throughput", "мкс/op"], rows)
+    write_markdown_report(
+        "part1_operations.md",
+        f"Index access sequential (N={N:,})",
+        ["Структура", "Время", "Throughput", "мкс/op"],
+        rows
+    )
 
 
 # ================================================================
@@ -313,6 +368,12 @@ def part2(sizes):
             row.append(fmt_ms(bench_push_back(cls, n)))
         rows.append(row)
     print_table(headers, rows)
+    write_markdown_report(
+        "part2_scaling.md",
+        "push_back ×N (мс)",
+        headers,
+        rows
+    )
 
     print(f"\n  --- push_front ×N (мс) ---")
     rows = []
@@ -322,6 +383,12 @@ def part2(sizes):
             row.append(fmt_ms(bench_push_front(cls, n)))
         rows.append(row)
     print_table(headers, rows)
+    write_markdown_report(
+        "part2_scaling.md",
+        "push_front ×N (мс)",
+        headers,
+        rows
+    )
 
     print(f"\n  --- Iteration (мс) ---")
     rows = []
@@ -331,7 +398,12 @@ def part2(sizes):
             row.append(fmt_ms(bench_iteration(cls, n)))
         rows.append(row)
     print_table(headers, rows)
-
+    write_markdown_report(
+        "part2_scaling.md",
+        "Iteration (мс)",
+        headers,
+        rows
+    )
 
 # ================================================================
 #  Part 3: Latency percentiles
@@ -373,11 +445,17 @@ def part3(N):
             f"{lats[min(int(len(lats)*0.999), len(lats)-1)]:.2f}μs",
         ))
     print_table(headers, rows)
+    write_markdown_report(
+        "part3_latency.md",
+        f"push_back latency percentiles (N={N:,})",
+        headers,
+        rows,
+    )
 
-    print("""
-  Примечание: list (Python) иногда показывает высокий p99.9 из-за
-  realloc при росте внутреннего массива. Linked lists не делают realloc,
-  но каждый push — это malloc, что стабильнее по latency.""")
+#     print("""
+#   Примечание: list (Python) иногда показывает высокий p99.9 из-за
+#   realloc при росте внутреннего массива. Linked lists не делают realloc,
+#   но каждый push — это malloc, что стабильнее по latency.""")
 
 
 # ================================================================
@@ -428,12 +506,35 @@ def part5(N):
     t_fwd = bench_iteration(DList, N)
     print(f"  Forward:  {fmt_ms(t_fwd)} мс")
     print(f"  Reversed: {fmt_ms(t)} мс")
+    rows = [
+        (
+            "move_to_front(index)",
+            f"{fmt_ms(bench_dlist_move_to_front_idx(N))} мс",
+            "O(n) поиск + O(1) move"
+        ),
+        (
+            "node handles LRU",
+            f"{fmt_ms(bench_dlist_node_handles(N))} мс",
+            "O(1) operations"
+        ),
+        (
+            "reversed iteration",
+            f"{fmt_ms(bench_dlist_reversed_iter(N))} мс",
+            "native reverse iterator"
+        ),
+    ]
 
-    print("""
-  Рекомендация:
-    Для LRU-кэша используйте node handles (push_back_node / move_to_front_node).
-    Это даёт O(1) на все операции — в отличие от move_to_front(index),
-    который тратит O(n) на поиск узла по индексу.""")
+    write_markdown_report(
+        "part5_dlist.md",
+        f"DList specific operations (N={N:,})",
+        ["Операция", "Время", "Примечание"],
+        rows,
+    )
+#     print("""
+#   Рекомендация:
+#     Для LRU-кэша используйте node handles (push_back_node / move_to_front_node).
+#     Это даёт O(1) на все операции — в отличие от move_to_front(index),
+#     который тратит O(n) на поиск узла по индексу.""")
 
 
 # ================================================================
@@ -447,23 +548,23 @@ def part6():
   ┌──────────────────┬────────────────┬────────────────┬────────────────┐
   │ Операция         │ list (array)   │ SList          │ DList          │
   ├──────────────────┼────────────────┼────────────────┼────────────────┤
-  │ push_back        │ O(1) аморт.   │ O(1)           │ O(1)           │
-  │ push_front       │ O(n) сдвиг    │ O(1)           │ O(1)           │
-  │ pop_back         │ O(1)          │ O(n) обход     │ O(1)           │
-  │ pop_front        │ O(n) сдвиг    │ O(1)           │ O(1)           │
-  │ insert(i, v)     │ O(n)          │ O(n)           │ O(n)           │
-  │ l[i] (доступ)    │ O(1)          │ O(n)           │ O(n) от края   │
-  │ contains (in)    │ O(n)          │ O(n)           │ O(n)           │
-  │ remove(v)        │ O(n)          │ O(n)           │ O(n)           │
-  │ reverse          │ O(n)          │ O(n)           │ O(n)           │
-  │ iteration        │ O(n) cache✓   │ O(n)           │ O(n)           │
-  │ move_to_front(h) │ —             │ —              │ O(1) ← handle  │
-  │ move_to_back(h)  │ —             │ —              │ O(1) ← handle  │
-  │ unlink(h)        │ —             │ —              │ O(1) ← handle  │
-  │ reversed()       │ O(n)          │ —              │ O(n) нативно   │
+  │ push_back        │ O(1) аморт.    │ O(1)           │ O(1)           │
+  │ push_front       │ O(n) сдвиг     │ O(1)           │ O(1)           │
+  │ pop_back         │ O(1)           │ O(n) обход     │ O(1)           │
+  │ pop_front        │ O(n) сдвиг     │ O(1)           │ O(1)           │
+  │ insert(i, v)     │ O(n)           │ O(n)           │ O(n)           │
+  │ l[i] (доступ)    │ O(1)           │ O(n)           │ O(n) от края   │
+  │ contains (in)    │ O(n)           │ O(n)           │ O(n)           │
+  │ remove(v)        │ O(n)           │ O(n)           │ O(n)           │
+  │ reverse          │ O(n)           │ O(n)           │ O(n)           │
+  │ iteration        │ O(n) cache✓    │ O(n)           │ O(n)           │
+  │ move_to_front(h) │ —              │ —              │ O(1) ← handle  │
+  │ move_to_back(h)  │ —              │ —              │ O(1) ← handle  │
+  │ unlink(h)        │ —              │ —              │ O(1) ← handle  │
+  │ reversed()       │ O(n)           │ —              │ O(n) нативно   │
   ├──────────────────┼────────────────┼────────────────┼────────────────┤
-  │ Память на элем.  │ 8 байт (ptr)  │ ~24 байт       │ ~32 байт       │
-  │ Cache locality   │ отличная      │ плохая         │ плохая         │
+  │ Память на элем.  │ 8 байт (ptr)   │ ~24 байт       │ ~32 байт       │
+  │ Cache locality   │ отличная       │ плохая         │ плохая         │
   └──────────────────┴────────────────┴────────────────┴────────────────┘
 
   list (array) выигрывает на iteration и random access (cache locality).
@@ -487,12 +588,15 @@ def main():
     print("Juniper List Benchmark Suite")
     print(f"Python {sys.version.split()[0]}, N={N:,}, sizes={sizes}")
 
-    part1(N)
+    for n in sizes:
+        part1(n)
     part2(sizes)
-    part3(N)
-    if not args.no_memory:
-        part4(sizes)
-    part5(N)
+    for n in sizes:
+        part3(n)
+    # if not args.no_memory:
+    #     part4(sizes)
+    for n in sizes:
+        part5(n)
     part6()
 
     print(f"\n{'='*78}")

@@ -26,10 +26,12 @@ import sys
 import time
 import tracemalloc
 
+from pathlib import Path
+
+
 from juniper import RBSet, AVLSet, BTreeSet, BSTSet, SkipListSet
 
 SETS = [
-    ("set (builtin)", set),
     ("RBSet",         RBSet),
     ("AVLSet",        AVLSet),
     ("BTreeSet",      BTreeSet),
@@ -204,6 +206,40 @@ def bench_mixed(cls, n, keys):
 
 
 # ================================================================
+#  Markdown reporting
+# ================================================================
+
+REPORT_DIR = Path("reports")
+REPORT_DIR.mkdir(exist_ok=True)
+
+
+def markdown_table(headers, rows):
+    lines = []
+
+    lines.append("| " + " | ".join(map(str, headers)) + " |")
+    lines.append("| " + " | ".join("---" for _ in headers) + " |")
+
+    for row in rows:
+        lines.append("| " + " | ".join(map(str, row)) + " |")
+
+    return "\n".join(lines)
+
+
+def write_markdown_report(filename, title, headers, rows, extra_text=None):
+    path = REPORT_DIR / filename
+
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(f"# {title}\n\n")
+
+        if extra_text:
+            f.write(extra_text.strip() + "\n\n")
+
+        f.write(markdown_table(headers, rows))
+        f.write("\n\n")
+
+    # print(f"  [markdown] saved -> {path}")
+
+# ================================================================
 #  Part 1: Per-operation benchmarks
 # ================================================================
 
@@ -237,6 +273,14 @@ def part1(N):
             rows.append((name, f"{fmt_ms(t)} мс", f"{fmt_ops(ops, t)} ops/s",
                          f"{t/ops*1e6:.2f} мкс"))
         print_table(["Структура", "Время", "Throughput", "мкс/op"], rows)
+        md_headers = ["Структура", "Время", "Throughput", "мкс/op"]
+
+        write_markdown_report(
+            "part1_operations.md",
+            f"{test_name} (N={N:,})",
+            md_headers,
+            rows
+        )
 
 
 # ================================================================
@@ -258,6 +302,12 @@ def part2(sizes):
             row.append(fmt_ms(bench_insert_rnd(cls, n, k)))
         rows.append(row)
     print_table(headers, rows)
+    write_markdown_report(
+        "part2_scaling.md",
+        "Random insert (мс)",
+        headers,
+        rows
+    )
 
     print(f"\n  --- Contains hit (мс) ---")
     rows = []
@@ -269,6 +319,12 @@ def part2(sizes):
             row.append(fmt_ms(bench_contains_hit(cls, n, k, lk)))
         rows.append(row)
     print_table(headers, rows)
+    write_markdown_report(
+        "part2_scaling.md",
+        "Contains hit (мс)",
+        headers,
+        rows
+    )
 
     print(f"\n  --- Iteration (мс) ---")
     rows = []
@@ -279,6 +335,12 @@ def part2(sizes):
             row.append(fmt_ms(bench_iteration(cls, n, k)))
         rows.append(row)
     print_table(headers, rows)
+    write_markdown_report(
+        "part2_scaling.md",
+        "Iteration (мс)",
+        headers,
+        rows
+    )
 
 
 # ================================================================
@@ -312,6 +374,12 @@ def part3(N):
             f"{lats[min(int(len(lats)*0.999), len(lats)-1)]:.2f}μs",
         ))
     print_table(headers, rows)
+    write_markdown_report(
+        "part3_latency.md",
+        f"Latency percentiles contains (N={N:,})",
+        headers,
+        rows
+    )
 
 
 # ================================================================
@@ -339,7 +407,7 @@ def part4(sizes):
 # ================================================================
 
 def part5(N):
-    print_header(f"Часть 5: Высота деревьев и структурные свойства (N={N:,})")
+    print_header(f"Часть 4: Высота деревьев и структурные свойства (N={N:,})")
 
     keys_rnd = list(range(N)); random.shuffle(keys_rnd)
     keys_seq = list(range(N))
@@ -371,6 +439,12 @@ def part5(N):
             note = "≤ 2·log₂(N+1)"
         rows.append((name, str(h), tmin, note))
     print_table(headers, rows)
+    write_markdown_report(
+        "part5_structure.md",
+        f"Tree height random insert (N={N:,})",
+        headers,
+        rows
+    )
 
     print(f"\n  --- Высота при последовательной вставке (worst case) ---")
     headers = ["Структура", "Высота", "Примечание"]
@@ -390,6 +464,12 @@ def part5(N):
             note = "балансировка сохраняется"
         rows.append((name, str(h), note))
     print_table(headers, rows)
+    write_markdown_report(
+        "part5_structure.md",
+        f"Tree height sequential insert worst-case (N={N:,})",
+        headers,
+        rows
+    )
 
 
 # ================================================================
@@ -397,7 +477,7 @@ def part5(N):
 # ================================================================
 
 def part6(N):
-    print_header(f"Часть 6: Отсортированный обход vs Python set")
+    print_header(f"Часть 5: Отсортированный обход")
 
     keys = [42, 7, 99, 3, 55, 18, 71]
     print(f"\n  Вставка: {keys}\n")
@@ -408,11 +488,16 @@ def part6(N):
         s = cls(keys)
         rows.append((name, str(list(s))))
     print_table(headers, rows)
+    write_markdown_report(
+        "part6_iteration_order.md",
+        "Sorted iteration order",
+        headers,
+        rows)
 
-    print("""
-  Python set не гарантирует порядок.
-  Все juniper sorted-set структуры итерируют in-order (по возрастанию).
-  Это ключевое отличие: sorted set = set + порядок.""")
+#     print("""
+#   Python set не гарантирует порядок.
+#   Все juniper sorted-set структуры итерируют in-order (по возрастанию).
+#   Это ключевое отличие: sorted set = set + порядок.""")
 
 
 # ================================================================
@@ -431,13 +516,17 @@ def main():
     print("Juniper Tree / Sorted-Set Benchmark Suite")
     print(f"Python {sys.version.split()[0]}, N={N:,}, sizes={sizes}")
 
-    part1(N)
+    for n in sizes:
+        part1(n)
     part2(sizes)
-    part3(N)
-    if not args.no_memory:
-        part4(sizes)
-    part5(N)
-    part6(N)
+    for n in sizes:
+        part3(n)
+    # if not args.no_memory:
+    #     part4(sizes)
+    for n in sizes:
+        part5(n)
+    for n in sizes:
+        part6(n)
 
     print(f"\n{'='*78}")
     print("  Benchmark complete.")
