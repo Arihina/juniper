@@ -1,8 +1,3 @@
-"""
-REAL memory benchmark for lists.
-Runs each test in a fresh Python process.
-"""
-
 import subprocess
 import sys
 
@@ -10,7 +5,7 @@ LISTS = ["list", "SList", "DList"]
 SIZES = [10_000, 50_000, 200_000]
 
 print("\n" + "="*70)
-print(" REAL MEMORY CONSUMPTION (Lists)")
+print(" MEMORY CONSUMPTION ")
 print("="*70)
 print(f"{'N':>10} {'List':>12} {'RSS MB':>12} {'Bytes/entry':>15}")
 print("-"*70)

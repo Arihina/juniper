@@ -1,9 +1,3 @@
-"""
-Measure REAL RSS memory for list structures (separate process).
-Usage:
-    python memory_lists.py --list list --n 50000
-"""
-
 import argparse
 import gc
 import resource

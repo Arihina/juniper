@@ -1,6 +1,6 @@
 import subprocess, sys, json
 
-STRUCTS=["set","BSTSet","AVLSet","RBSet","BTreeSet","SkipListSet"]
+STRUCTS=["AVLSet","RBSet","BTreeSet","SkipListSet"]
 SIZES=[10000,50000,200000]
 
 def run_case(name,n):
@@ -12,12 +12,22 @@ def run_case(name,n):
     ])
     return json.loads(out)
 
-rows=[]
-for n in SIZES:
-    for s in STRUCTS:
-        rows.append(run_case(s,n))
+def print_table(rows):
+    print("\n" + "="*70)
+    print(" MEMORY CONSUMPTION ")
+    print("="*70)
+    print(f"{'N':>10} {'Struct':>12} {'RSS MB':>12} {'Bytes/entry':>14}")
+    print("-"*70)
+    for r in rows:
+        print(f"{r['n']:>10} {r['map']:>12} {r['rss']:>12.2f} {r['bpe']:>14.1f}")
 
-print("\nREAL MEMORY TREES")
-print("N   Struct   RSS MB   Bytes/entry")
-for r in rows:
-    print(r["n"], r["map"], round(r["rss"],2), round(r["bpe"],1))
+def main():
+    rows = []
+    for n in SIZES:
+        for m in STRUCTS:
+            res = run_case(m, n)
+            rows.append(res)
+    print_table(rows)
+
+if __name__ == "__main__":
+    main()

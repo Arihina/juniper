@@ -1,13 +1,11 @@
 import argparse, json, resource, random, gc
-from juniper import BSTSet, AVLSet, RBSet, BTreeSet, SkipListSet
+from juniper import AVLSet, RBSet, BTreeSet, SkipListSet
 
 def get_rss():
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024
 
 def make(name):
     return {
-        "set": set(),
-        "BSTSet": BSTSet(),
         "AVLSet": AVLSet(),
         "RBSet": RBSet(),
         "BTreeSet": BTreeSet(),

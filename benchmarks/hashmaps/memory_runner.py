@@ -17,7 +17,7 @@ def run_case(map_name, n):
 
 def print_table(rows):
     print("\n" + "="*70)
-    print(" REAL MEMORY CONSUMPTION (separate process per test)")
+    print(" MEMORY CONSUMPTION ")
     print("="*70)
     print(f"{'N':>10} {'Map':>12} {'RSS MB':>12} {'Peak MB':>12} {'Bytes/entry':>14}")
     print("-"*70)

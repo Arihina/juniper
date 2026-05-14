@@ -9,7 +9,6 @@ import tracemalloc
 from juniper import HashMap, RHMap, BTHashMap, SwissTable
 
 
-# === ТВОЙ make_map ИЗ БЕНЧА ===
 def make_map(name, n):
     if name == "dict":
         return {}
@@ -37,7 +36,6 @@ def main():
     N = args.n
     MAP = args.map
 
-    # одинаковые ключи как в твоём бенче
     keys = list(range(N))
     random.shuffle(keys)
 
@@ -47,7 +45,6 @@ def main():
     tracemalloc.start()
     rss_before = get_rss_mb()
 
-    # ==== создание и заполнение ====
     m = make_map(MAP, N)
     for k in keys:
         m[k] = k
