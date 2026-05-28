@@ -6,9 +6,9 @@ Juniper Hash Map Benchmark Suite
   HashMap, RHMap, BTHashMap, SwissTable, dict (baseline)
 
 Запуск:
-  python3 hashmaps.py              # полный прогон
-  python3 hashmaps.py --quick      # быстрый (N=10k)
-  python3 hashmaps.py --no-memory  # без замеров памяти
+  python3 bench.py              # полный прогон
+  python3 bench.py --quick      # быстрый (N=10k)
+  python3 bench.py --no-memory  # без замеров памяти
 
 Критерии оценки
 ---------------
