@@ -16,30 +16,30 @@
 
 | Policy | Workload | Ops/sec | ns/op | Hit Ratio | Time |
 |---|---|---:|---:|---:|---:|
-| ARCCache | uniform |        371,605 | 2691.0 | 0.041 | 2.69s |
-| ARCCache | zipf |        771,214 | 1296.7 | 0.901 | 1.30s |
-| ARCCache | loop |      1,279,780 | 781.4 | 1.000 | 0.78s |
-| ARCCache | scan |        810,234 | 1234.2 | 0.000 | 1.23s |
-| FIFOCache | uniform |        601,630 | 1662.2 | 0.041 | 1.66s |
-| FIFOCache | zipf |      1,354,177 | 738.5 | 0.854 | 0.74s |
-| FIFOCache | loop |      3,244,985 | 308.2 | 1.000 | 0.31s |
-| FIFOCache | scan |        946,541 | 1056.5 | 0.000 | 1.06s |
-| LFUCache | uniform |        429,403 | 2328.8 | 0.041 | 2.33s |
-| LFUCache | zipf |        530,394 | 1885.4 | 0.901 | 1.89s |
-| LFUCache | loop |        810,747 | 1233.4 | 1.000 | 1.23s |
-| LFUCache | scan |        642,295 | 1556.9 | 0.000 | 1.56s |
-| LRUCache | uniform |        585,663 | 1707.5 | 0.041 | 1.71s |
-| LRUCache | zipf |      1,217,370 | 821.4 | 0.876 | 0.82s |
-| LRUCache | loop |      2,030,918 | 492.4 | 1.000 | 0.49s |
-| LRUCache | scan |        983,926 | 1016.3 | 0.000 | 1.02s |
-| MRUCache | uniform |        609,365 | 1641.1 | 0.041 | 1.64s |
-| MRUCache | zipf |        733,991 | 1362.4 | 0.126 | 1.36s |
-| MRUCache | loop |      2,099,448 | 476.3 | 1.000 | 0.48s |
-| MRUCache | scan |        980,224 | 1020.2 | 0.004 | 1.02s |
-| TTLCache | uniform |        378,275 | 2643.6 | 0.041 | 2.64s |
-| TTLCache | zipf |        960,859 | 1040.7 | 0.853 | 1.04s |
-| TTLCache | loop |      1,943,925 | 514.4 | 1.000 | 0.51s |
-| TTLCache | scan |        483,848 | 2066.8 | 0.000 | 2.07s |
+| ARCCache | uniform |        379,544 | 2634.7 | 0.041 | 2.63s |
+| ARCCache | zipf |        859,194 | 1163.9 | 0.901 | 1.16s |
+| ARCCache | loop |      1,328,617 | 752.7 | 1.000 | 0.75s |
+| ARCCache | scan |        877,549 | 1139.5 | 0.000 | 1.14s |
+| FIFOCache | uniform |        613,004 | 1631.3 | 0.041 | 1.63s |
+| FIFOCache | zipf |      1,501,949 | 665.8 | 0.854 | 0.67s |
+| FIFOCache | loop |      3,501,179 | 285.6 | 1.000 | 0.29s |
+| FIFOCache | scan |      1,031,636 | 969.3 | 0.000 | 0.97s |
+| LFUCache | uniform |        450,384 | 2220.3 | 0.041 | 2.22s |
+| LFUCache | zipf |        567,576 | 1761.9 | 0.901 | 1.76s |
+| LFUCache | loop |        870,022 | 1149.4 | 1.000 | 1.15s |
+| LFUCache | scan |        671,134 | 1490.0 | 0.000 | 1.49s |
+| LRUCache | uniform |        624,460 | 1601.4 | 0.041 | 1.60s |
+| LRUCache | zipf |      1,288,580 | 776.0 | 0.876 | 0.78s |
+| LRUCache | loop |      2,171,382 | 460.5 | 1.000 | 0.46s |
+| LRUCache | scan |      1,014,039 | 986.2 | 0.000 | 0.99s |
+| MRUCache | uniform |        646,939 | 1545.7 | 0.041 | 1.55s |
+| MRUCache | zipf |        773,824 | 1292.3 | 0.126 | 1.29s |
+| MRUCache | loop |      2,202,684 | 454.0 | 1.000 | 0.45s |
+| MRUCache | scan |        989,578 | 1010.5 | 0.004 | 1.01s |
+| TTLCache | uniform |        398,492 | 2509.5 | 0.041 | 2.51s |
+| TTLCache | zipf |        975,602 | 1025.0 | 0.853 | 1.03s |
+| TTLCache | loop |      2,059,771 | 485.5 | 1.000 | 0.49s |
+| TTLCache | scan |        524,800 | 1905.5 | 0.000 | 1.91s |
 
 ---
 
@@ -47,30 +47,30 @@
 
 | Policy | Workload | Ops/sec | ns/op | Hit Ratio | Time |
 |---|---|---:|---:|---:|---:|
-| ARCCache | uniform |        444,451 | 2250.0 | 0.041 | 2.25s |
-| ARCCache | zipf |        673,320 | 1485.2 | 0.902 | 1.49s |
-| ARCCache | loop |      1,502,593 | 665.5 | 1.000 | 0.67s |
-| ARCCache | scan |        982,180 | 1018.1 | 0.000 | 1.02s |
-| FIFOCache | uniform |        766,393 | 1304.8 | 0.041 | 1.30s |
-| FIFOCache | zipf |      1,149,205 | 870.2 | 0.853 | 0.87s |
-| FIFOCache | loop |      3,861,811 | 258.9 | 1.000 | 0.26s |
-| FIFOCache | scan |      1,178,717 | 848.4 | 0.000 | 0.85s |
-| LFUCache | uniform |        543,651 | 1839.4 | 0.041 | 1.84s |
-| LFUCache | zipf |        476,888 | 2096.9 | 0.901 | 2.10s |
-| LFUCache | loop |        955,761 | 1046.3 | 1.000 | 1.05s |
-| LFUCache | scan |        804,795 | 1242.6 | 0.000 | 1.24s |
-| LRUCache | uniform |        734,551 | 1361.4 | 0.041 | 1.36s |
-| LRUCache | zipf |      1,031,763 | 969.2 | 0.876 | 0.97s |
-| LRUCache | loop |      2,533,934 | 394.6 | 1.000 | 0.39s |
-| LRUCache | scan |      1,162,109 | 860.5 | 0.000 | 0.86s |
-| MRUCache | uniform |        755,277 | 1324.0 | 0.041 | 1.32s |
-| MRUCache | zipf |        871,448 | 1147.5 | 0.126 | 1.15s |
-| MRUCache | loop |      2,432,759 | 411.1 | 1.000 | 0.41s |
-| MRUCache | scan |        135,496 | 7380.3 | 0.004 | 7.38s |
-| TTLCache | uniform |        424,173 | 2357.5 | 0.041 | 2.36s |
-| TTLCache | zipf |        909,346 | 1099.7 | 0.853 | 1.10s |
-| TTLCache | loop |      2,257,424 | 443.0 | 1.000 | 0.44s |
-| TTLCache | scan |        519,166 | 1926.2 | 0.000 | 1.93s |
+| ARCCache | uniform |        489,726 | 2042.0 | 0.041 | 2.04s |
+| ARCCache | zipf |        685,928 | 1457.9 | 0.902 | 1.46s |
+| ARCCache | loop |      1,500,463 | 666.5 | 1.000 | 0.67s |
+| ARCCache | scan |      1,026,709 | 974.0 | 0.000 | 0.97s |
+| FIFOCache | uniform |        813,383 | 1229.4 | 0.041 | 1.23s |
+| FIFOCache | zipf |      1,242,338 | 804.9 | 0.853 | 0.80s |
+| FIFOCache | loop |      3,921,624 | 255.0 | 1.000 | 0.25s |
+| FIFOCache | scan |      1,235,820 | 809.2 | 0.000 | 0.81s |
+| LFUCache | uniform |        575,340 | 1738.1 | 0.041 | 1.74s |
+| LFUCache | zipf |        513,770 | 1946.4 | 0.901 | 1.95s |
+| LFUCache | loop |        998,508 | 1001.5 | 1.000 | 1.00s |
+| LFUCache | scan |        827,875 | 1207.9 | 0.000 | 1.21s |
+| LRUCache | uniform |        771,567 | 1296.1 | 0.041 | 1.30s |
+| LRUCache | zipf |      1,120,831 | 892.2 | 0.876 | 0.89s |
+| LRUCache | loop |      2,646,096 | 377.9 | 1.000 | 0.38s |
+| LRUCache | scan |      1,229,323 | 813.5 | 0.000 | 0.81s |
+| MRUCache | uniform |        803,096 | 1245.2 | 0.041 | 1.25s |
+| MRUCache | zipf |        949,905 | 1052.7 | 0.126 | 1.05s |
+| MRUCache | loop |      2,454,076 | 407.5 | 1.000 | 0.41s |
+| MRUCache | scan |        142,377 | 7023.6 | 0.004 | 7.02s |
+| TTLCache | uniform |        440,899 | 2268.1 | 0.041 | 2.27s |
+| TTLCache | zipf |        939,785 | 1064.1 | 0.853 | 1.06s |
+| TTLCache | loop |      2,333,452 | 428.5 | 1.000 | 0.43s |
+| TTLCache | scan |        551,907 | 1811.9 | 0.000 | 1.81s |
 
 ---
 
@@ -78,30 +78,30 @@
 
 | Policy | Workload | Ops/sec | ns/op | Hit Ratio | Time |
 |---|---|---:|---:|---:|---:|
-| ARCCache | uniform |        309,655 | 3229.4 | 0.041 | 3.23s |
-| ARCCache | zipf |        716,307 | 1396.0 | 0.901 | 1.40s |
-| ARCCache | loop |      1,119,172 | 893.5 | 1.000 | 0.89s |
-| ARCCache | scan |        680,271 | 1470.0 | 0.000 | 1.47s |
-| FIFOCache | uniform |        569,293 | 1756.6 | 0.041 | 1.76s |
-| FIFOCache | zipf |      1,206,161 | 829.1 | 0.854 | 0.83s |
-| FIFOCache | loop |      2,422,231 | 412.8 | 1.000 | 0.41s |
-| FIFOCache | scan |        837,298 | 1194.3 | 0.000 | 1.19s |
-| LFUCache | uniform |        405,260 | 2467.6 | 0.041 | 2.47s |
-| LFUCache | zipf |        486,204 | 2056.8 | 0.901 | 2.06s |
-| LFUCache | loop |        704,873 | 1418.7 | 1.000 | 1.42s |
-| LFUCache | scan |        549,859 | 1818.6 | 0.000 | 1.82s |
-| LRUCache | uniform |        551,293 | 1813.9 | 0.041 | 1.81s |
-| LRUCache | zipf |      1,036,244 | 965.0 | 0.876 | 0.97s |
-| LRUCache | loop |      1,769,548 | 565.1 | 1.000 | 0.57s |
-| LRUCache | scan |        825,674 | 1211.1 | 0.000 | 1.21s |
-| MRUCache | uniform |        547,948 | 1825.0 | 0.041 | 1.82s |
-| MRUCache | zipf |        696,164 | 1436.4 | 0.124 | 1.44s |
-| MRUCache | loop |      1,576,902 | 634.2 | 1.000 | 0.63s |
-| MRUCache | scan |        861,567 | 1160.7 | 0.004 | 1.16s |
-| TTLCache | uniform |        328,849 | 3040.9 | 0.041 | 3.04s |
-| TTLCache | zipf |        764,294 | 1308.4 | 0.853 | 1.31s |
-| TTLCache | loop |      1,688,278 | 592.3 | 1.000 | 0.59s |
-| TTLCache | scan |        383,380 | 2608.4 | 0.000 | 2.61s |
+| ARCCache | uniform |        345,683 | 2892.8 | 0.041 | 2.89s |
+| ARCCache | zipf |        721,668 | 1385.7 | 0.901 | 1.39s |
+| ARCCache | loop |      1,158,545 | 863.2 | 1.000 | 0.86s |
+| ARCCache | scan |        726,175 | 1377.1 | 0.000 | 1.38s |
+| FIFOCache | uniform |        604,005 | 1655.6 | 0.041 | 1.66s |
+| FIFOCache | zipf |      1,352,464 | 739.4 | 0.854 | 0.74s |
+| FIFOCache | loop |      2,545,429 | 392.9 | 1.000 | 0.39s |
+| FIFOCache | scan |        882,675 | 1132.9 | 0.000 | 1.13s |
+| LFUCache | uniform |        441,574 | 2264.6 | 0.041 | 2.26s |
+| LFUCache | zipf |        515,937 | 1938.2 | 0.901 | 1.94s |
+| LFUCache | loop |        742,237 | 1347.3 | 1.000 | 1.35s |
+| LFUCache | scan |        604,603 | 1654.0 | 0.000 | 1.65s |
+| LRUCache | uniform |        606,880 | 1647.8 | 0.041 | 1.65s |
+| LRUCache | zipf |      1,134,204 | 881.7 | 0.876 | 0.88s |
+| LRUCache | loop |      1,854,654 | 539.2 | 1.000 | 0.54s |
+| LRUCache | scan |        898,507 | 1113.0 | 0.000 | 1.11s |
+| MRUCache | uniform |        626,722 | 1595.6 | 0.041 | 1.60s |
+| MRUCache | zipf |        769,929 | 1298.8 | 0.124 | 1.30s |
+| MRUCache | loop |      1,710,452 | 584.6 | 1.000 | 0.58s |
+| MRUCache | scan |        914,302 | 1093.7 | 0.004 | 1.09s |
+| TTLCache | uniform |        382,748 | 2612.7 | 0.041 | 2.61s |
+| TTLCache | zipf |        933,759 | 1070.9 | 0.853 | 1.07s |
+| TTLCache | loop |      1,800,714 | 555.3 | 1.000 | 0.56s |
+| TTLCache | scan |        498,086 | 2007.7 | 0.000 | 2.01s |
 
 ---
 
@@ -109,30 +109,30 @@
 
 | Policy | Workload | Ops/sec | ns/op | Hit Ratio | Time |
 |---|---|---:|---:|---:|---:|
-| ARCCache | uniform |        317,809 | 3146.5 | 0.041 | 3.15s |
-| ARCCache | zipf |        705,573 | 1417.3 | 0.901 | 1.42s |
-| ARCCache | loop |        931,544 | 1073.5 | 1.000 | 1.07s |
-| ARCCache | scan |        572,875 | 1745.6 | 0.000 | 1.75s |
-| FIFOCache | uniform |        566,860 | 1764.1 | 0.041 | 1.76s |
-| FIFOCache | zipf |      1,208,407 | 827.5 | 0.854 | 0.83s |
-| FIFOCache | loop |      2,477,701 | 403.6 | 1.000 | 0.40s |
-| FIFOCache | scan |        761,980 | 1312.4 | 0.000 | 1.31s |
-| LFUCache | uniform |        410,247 | 2437.6 | 0.041 | 2.44s |
-| LFUCache | zipf |        468,161 | 2136.0 | 0.901 | 2.14s |
-| LFUCache | loop |        563,954 | 1773.2 | 1.000 | 1.77s |
-| LFUCache | scan |        496,158 | 2015.5 | 0.000 | 2.02s |
-| LRUCache | uniform |        549,297 | 1820.5 | 0.041 | 1.82s |
-| LRUCache | zipf |      1,007,007 | 993.0 | 0.876 | 0.99s |
-| LRUCache | loop |      1,149,091 | 870.3 | 1.000 | 0.87s |
-| LRUCache | scan |        724,593 | 1380.1 | 0.000 | 1.38s |
-| MRUCache | uniform |        631,566 | 1583.4 | 0.041 | 1.58s |
-| MRUCache | zipf |        746,433 | 1339.7 | 0.125 | 1.34s |
-| MRUCache | loop |      1,488,685 | 671.7 | 1.000 | 0.67s |
-| MRUCache | scan |        889,954 | 1123.7 | 0.004 | 1.12s |
-| TTLCache | uniform |        353,110 | 2832.0 | 0.041 | 2.83s |
-| TTLCache | zipf |        972,016 | 1028.8 | 0.853 | 1.03s |
-| TTLCache | loop |      1,727,894 | 578.7 | 1.000 | 0.58s |
-| TTLCache | scan |        487,411 | 2051.7 | 0.000 | 2.05s |
+| ARCCache | uniform |        381,950 | 2618.1 | 0.041 | 2.62s |
+| ARCCache | zipf |        749,479 | 1334.3 | 0.901 | 1.33s |
+| ARCCache | loop |      1,039,391 | 962.1 | 1.000 | 0.96s |
+| ARCCache | scan |        665,674 | 1502.2 | 0.000 | 1.50s |
+| FIFOCache | uniform |        621,524 | 1608.9 | 0.041 | 1.61s |
+| FIFOCache | zipf |      1,339,823 | 746.4 | 0.854 | 0.75s |
+| FIFOCache | loop |      2,585,739 | 386.7 | 1.000 | 0.39s |
+| FIFOCache | scan |        822,501 | 1215.8 | 0.000 | 1.22s |
+| LFUCache | uniform |        444,580 | 2249.3 | 0.041 | 2.25s |
+| LFUCache | zipf |        507,673 | 1969.8 | 0.901 | 1.97s |
+| LFUCache | loop |        670,431 | 1491.6 | 1.000 | 1.49s |
+| LFUCache | scan |        566,622 | 1764.8 | 0.000 | 1.76s |
+| LRUCache | uniform |        607,383 | 1646.4 | 0.041 | 1.65s |
+| LRUCache | zipf |      1,111,703 | 899.5 | 0.876 | 0.90s |
+| LRUCache | loop |      1,757,137 | 569.1 | 1.000 | 0.57s |
+| LRUCache | scan |        868,990 | 1150.8 | 0.000 | 1.15s |
+| MRUCache | uniform |        659,952 | 1515.3 | 0.041 | 1.52s |
+| MRUCache | zipf |        772,218 | 1295.0 | 0.125 | 1.29s |
+| MRUCache | loop |      1,648,207 | 606.7 | 1.000 | 0.61s |
+| MRUCache | scan |        894,266 | 1118.2 | 0.004 | 1.12s |
+| TTLCache | uniform |        406,910 | 2457.5 | 0.041 | 2.46s |
+| TTLCache | zipf |        958,613 | 1043.2 | 0.853 | 1.04s |
+| TTLCache | loop |      1,708,474 | 585.3 | 1.000 | 0.59s |
+| TTLCache | scan |        492,699 | 2029.6 | 0.000 | 2.03s |
 
 ---
 
@@ -162,27 +162,27 @@
 
 | Policy | Workload | Best Map | Ops/sec | ns/op | Hit Ratio |
 |---|---|---|---:|---:|---:|
-| ARCCache | uniform | `RHMap` |        444,451 | 2250.0 | 0.041 |
-| ARCCache | zipf | `SwissTable` |        771,214 | 1296.7 | 0.901 |
-| ARCCache | loop | `RHMap` |      1,502,593 | 665.5 | 1.000 |
-| ARCCache | scan | `RHMap` |        982,180 | 1018.1 | 0.000 |
-| FIFOCache | uniform | `RHMap` |        766,393 | 1304.8 | 0.041 |
-| FIFOCache | zipf | `SwissTable` |      1,354,177 | 738.5 | 0.854 |
-| FIFOCache | loop | `RHMap` |      3,861,811 | 258.9 | 1.000 |
-| FIFOCache | scan | `RHMap` |      1,178,717 | 848.4 | 0.000 |
-| LFUCache | uniform | `RHMap` |        543,651 | 1839.4 | 0.041 |
-| LFUCache | zipf | `SwissTable` |        530,394 | 1885.4 | 0.901 |
-| LFUCache | loop | `RHMap` |        955,761 | 1046.3 | 1.000 |
-| LFUCache | scan | `RHMap` |        804,795 | 1242.6 | 0.000 |
-| LRUCache | uniform | `RHMap` |        734,551 | 1361.4 | 0.041 |
-| LRUCache | zipf | `SwissTable` |      1,217,370 | 821.4 | 0.876 |
-| LRUCache | loop | `RHMap` |      2,533,934 | 394.6 | 1.000 |
-| LRUCache | scan | `RHMap` |      1,162,109 | 860.5 | 0.000 |
-| MRUCache | uniform | `RHMap` |        755,277 | 1324.0 | 0.041 |
-| MRUCache | zipf | `RHMap` |        871,448 | 1147.5 | 0.126 |
-| MRUCache | loop | `RHMap` |      2,432,759 | 411.1 | 1.000 |
-| MRUCache | scan | `SwissTable` |        980,224 | 1020.2 | 0.004 |
-| TTLCache | uniform | `RHMap` |        424,173 | 2357.5 | 0.041 |
-| TTLCache | zipf | `HashMap` |        972,016 | 1028.8 | 0.853 |
-| TTLCache | loop | `RHMap` |      2,257,424 | 443.0 | 1.000 |
-| TTLCache | scan | `RHMap` |        519,166 | 1926.2 | 0.000 |
+| ARCCache | uniform | `RHMap` |        489,726 | 2042.0 | 0.041 |
+| ARCCache | zipf | `SwissTable` |        859,194 | 1163.9 | 0.901 |
+| ARCCache | loop | `RHMap` |      1,500,463 | 666.5 | 1.000 |
+| ARCCache | scan | `RHMap` |      1,026,709 | 974.0 | 0.000 |
+| FIFOCache | uniform | `RHMap` |        813,383 | 1229.4 | 0.041 |
+| FIFOCache | zipf | `SwissTable` |      1,501,949 | 665.8 | 0.854 |
+| FIFOCache | loop | `RHMap` |      3,921,624 | 255.0 | 1.000 |
+| FIFOCache | scan | `RHMap` |      1,235,820 | 809.2 | 0.000 |
+| LFUCache | uniform | `RHMap` |        575,340 | 1738.1 | 0.041 |
+| LFUCache | zipf | `SwissTable` |        567,576 | 1761.9 | 0.901 |
+| LFUCache | loop | `RHMap` |        998,508 | 1001.5 | 1.000 |
+| LFUCache | scan | `RHMap` |        827,875 | 1207.9 | 0.000 |
+| LRUCache | uniform | `RHMap` |        771,567 | 1296.1 | 0.041 |
+| LRUCache | zipf | `SwissTable` |      1,288,580 | 776.0 | 0.876 |
+| LRUCache | loop | `RHMap` |      2,646,096 | 377.9 | 1.000 |
+| LRUCache | scan | `RHMap` |      1,229,323 | 813.5 | 0.000 |
+| MRUCache | uniform | `RHMap` |        803,096 | 1245.2 | 0.041 |
+| MRUCache | zipf | `RHMap` |        949,905 | 1052.7 | 0.126 |
+| MRUCache | loop | `RHMap` |      2,454,076 | 407.5 | 1.000 |
+| MRUCache | scan | `SwissTable` |        989,578 | 1010.5 | 0.004 |
+| TTLCache | uniform | `RHMap` |        440,899 | 2268.1 | 0.041 |
+| TTLCache | zipf | `SwissTable` |        975,602 | 1025.0 | 0.853 |
+| TTLCache | loop | `RHMap` |      2,333,452 | 428.5 | 1.000 |
+| TTLCache | scan | `RHMap` |        551,907 | 1811.9 | 0.000 |
