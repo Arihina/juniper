@@ -1,4 +1,3 @@
-# juniper/core/cache/policies/lfu.py
 """
 LFU cache policy.
 
