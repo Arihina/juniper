@@ -1,11 +1,11 @@
 | Policy | Best for | Weak against | Complexity | Notes |
 |---|---|---|---|---|
 | LRU | General workloads | Large scans | O(1) | Best default choice |
-| LFU | Stable hotsets | Bursty traffic | O(1) | Highest hit ratio on skewed loads |
-| ARC | Mixed/adaptive workloads | CPU overhead | O(1) | Self-tuning LRU/LFU hybrid |
+| LFU | Stable hotsets | Bursty traffic; stale popularity (no aging) | O(1)* |  Highest hit ratio on static skew; *O(1) requires frequency-bucket lists|
+| ARC | Mixed/adaptive workloads | CPU overhead;  Extra metadata (ghost lists) | O(1) |  Self-tuning recency/frequency balance (two LRU lists + miss history) |
 | FIFO | Simple queues | Locality-heavy access | O(1) | Lowest overhead |
 | MRU | Sequential scans | Temporal locality | O(1) | Opposite of LRU |
-| TTL | Expiring data | High churn | O(log n) | Time-aware eviction |
+| TTL | Expiring data | High churn | O(log n) | Time-based eviction, not capacity-based; usually layered over LRU/LFU|
 
 ## Which policy should I use?
 
