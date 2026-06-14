@@ -2,15 +2,54 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(__SSE2__) || defined(_M_X64) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2)
+#define SW_HAVE_SSE2 1
+#include <emmintrin.h>
+#endif
+
+#if SW_HAVE_SSE2
+
+/* SSE2-путь рассчитан строго на группу в один регистр (16 байт). */
+_Static_assert(SW_GROUP_SIZE == 16, "SSE2 path requires SW_GROUP_SIZE == 16");
+
+static inline __m128i sw_load_group(const uint8_t *ctrl, size_t offset)
+{
+    /* group_off всегда кратен 16 => в границах; loadu для надёжности по выравниванию */
+    return _mm_loadu_si128((const __m128i *)(ctrl + offset));
+}
+
+static uint32_t group_match(const uint8_t *ctrl, size_t offset, uint8_t h2)
+{
+    __m128i g = sw_load_group(ctrl, offset);
+    __m128i eq = _mm_cmpeq_epi8(_mm_set1_epi8((char)h2), g);
+    return (uint32_t)_mm_movemask_epi8(eq);
+}
+
+static uint32_t group_match_empty(const uint8_t *ctrl, size_t offset)
+{
+    __m128i g = sw_load_group(ctrl, offset);
+    __m128i eq = _mm_cmpeq_epi8(_mm_set1_epi8((char)SW_EMPTY), g);
+    return (uint32_t)_mm_movemask_epi8(eq);
+}
+
+static uint32_t group_match_empty_or_deleted(const uint8_t *ctrl, size_t offset)
+{
+    /* беззнаковое g[i] >= SW_DELETED  <=>  max_epu8(g, thr) == g */
+    __m128i g = sw_load_group(ctrl, offset);
+    __m128i thr = _mm_set1_epi8((char)SW_DELETED);
+    __m128i ge = _mm_cmpeq_epi8(_mm_max_epu8(g, thr), g);
+    return (uint32_t)_mm_movemask_epi8(ge);
+}
+
+#else /* скалярный фолбэк для не-x86 (ARM и т.п.) */
+
 static uint32_t group_match(const uint8_t *ctrl, size_t offset, uint8_t h2)
 {
     uint32_t mask = 0;
     const uint8_t *g = ctrl + offset;
     for (int i = 0; i < SW_GROUP_SIZE; i++)
-    {
         if (g[i] == h2)
             mask |= (1u << i);
-    }
     return mask;
 }
 
@@ -19,10 +58,8 @@ static uint32_t group_match_empty(const uint8_t *ctrl, size_t offset)
     uint32_t mask = 0;
     const uint8_t *g = ctrl + offset;
     for (int i = 0; i < SW_GROUP_SIZE; i++)
-    {
         if (g[i] == SW_EMPTY)
             mask |= (1u << i);
-    }
     return mask;
 }
 
@@ -31,12 +68,12 @@ static uint32_t group_match_empty_or_deleted(const uint8_t *ctrl, size_t offset)
     uint32_t mask = 0;
     const uint8_t *g = ctrl + offset;
     for (int i = 0; i < SW_GROUP_SIZE; i++)
-    {
         if (g[i] >= SW_DELETED)
             mask |= (1u << i);
-    }
     return mask;
 }
+
+#endif /* SW_HAVE_SSE2 */
 
 static int ctz32(uint32_t x)
 {

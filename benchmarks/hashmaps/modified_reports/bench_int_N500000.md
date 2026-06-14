@@ -78,3 +78,83 @@
 | BTHashMap | 0.44μs | 0.39μs | 0.52μs | 1.01μs | 2.14μs |
 | SwissTable | 0.30μs | 0.26μs | 0.33μs | 0.85μs | 10.05μs |
 
+# Insert rnd (int, N=500,000)
+
+| Структура | Время | Throughput | мкс/op |
+| --- | --- | --- | --- |
+| dict | 114.2 мс | 4.38M ops/s | 0.23 мкс |
+| HashMap | 628.4 мс | 795.7K ops/s | 1.26 мкс |
+| RHMap | 137.9 мс | 3.63M ops/s | 0.28 мкс |
+| BTHashMap | 379.1 мс | 1.32M ops/s | 0.76 мкс |
+| SwissTable | 156.4 мс | 3.20M ops/s | 0.31 мкс |
+
+# Lookup hit (int, N=500,000)
+
+| Структура | Время | Throughput | мкс/op |
+| --- | --- | --- | --- |
+| dict | 132.8 мс | 3.77M ops/s | 0.27 мкс |
+| HashMap | 213.0 мс | 2.35M ops/s | 0.43 мкс |
+| RHMap | 112.5 мс | 4.45M ops/s | 0.22 мкс |
+| BTHashMap | 214.5 мс | 2.33M ops/s | 0.43 мкс |
+| SwissTable | 134.2 мс | 3.73M ops/s | 0.27 мкс |
+
+# Lookup miss (int, N=500,000)
+
+| Структура | Время | Throughput | мкс/op |
+| --- | --- | --- | --- |
+| dict | 55.2 мс | 9.06M ops/s | 0.11 мкс |
+| HashMap | 45.2 мс | 11.06M ops/s | 0.09 мкс |
+| RHMap | 44.5 мс | 11.25M ops/s | 0.09 мкс |
+| BTHashMap | 212.6 мс | 2.35M ops/s | 0.43 мкс |
+| SwissTable | 113.5 мс | 4.41M ops/s | 0.23 мкс |
+
+# Lookup Zipf (int, N=500,000)
+
+| Структура | Время | Throughput | мкс/op |
+| --- | --- | --- | --- |
+| dict | 10.4 мс | 47.96M ops/s | 0.02 мкс |
+| HashMap | 14.5 мс | 34.40M ops/s | 0.03 мкс |
+| RHMap | 10.5 мс | 47.40M ops/s | 0.02 мкс |
+| BTHashMap | 19.0 мс | 26.30M ops/s | 0.04 мкс |
+| SwissTable | 14.2 мс | 35.20M ops/s | 0.03 мкс |
+
+# Update all (int, N=500,000)
+
+| Структура | Время | Throughput | мкс/op |
+| --- | --- | --- | --- |
+| dict | 79.1 мс | 6.32M ops/s | 0.16 мкс |
+| HashMap | 140.2 мс | 3.57M ops/s | 0.28 мкс |
+| RHMap | 94.8 мс | 5.27M ops/s | 0.19 мкс |
+| BTHashMap | 176.6 мс | 2.83M ops/s | 0.35 мкс |
+| SwissTable | 118.4 мс | 4.22M ops/s | 0.24 мкс |
+
+# Insert+Delete (int, N=500,000)
+
+| Структура | Время | Throughput | мкс/op |
+| --- | --- | --- | --- |
+| dict | 156.3 мс | 6.40M ops/s | 0.16 мкс |
+| HashMap | 497.0 мс | 2.01M ops/s | 0.50 мкс |
+| RHMap | 239.2 мс | 4.18M ops/s | 0.24 мкс |
+| BTHashMap | 585.5 мс | 1.71M ops/s | 0.59 мкс |
+| SwissTable | 245.7 мс | 4.07M ops/s | 0.25 мкс |
+
+# Mixed 80R/20W (int, N=500,000)
+
+| Структура | Время | Throughput | мкс/op |
+| --- | --- | --- | --- |
+| dict | 122.8 мс | 4.07M ops/s | 0.25 мкс |
+| HashMap | 175.1 мс | 2.86M ops/s | 0.35 мкс |
+| RHMap | 119.4 мс | 4.19M ops/s | 0.24 мкс |
+| BTHashMap | 235.2 мс | 2.13M ops/s | 0.47 мкс |
+| SwissTable | 139.6 мс | 3.58M ops/s | 0.28 мкс |
+
+# Latency percentiles (int, N=500,000)
+
+| Структура | avg | p50 | p90 | p99 | p99.9 |
+| --- | --- | --- | --- | --- | --- |
+| dict | 0.46μs | 0.35μs | 0.50μs | 1.01μs | 7.54μs |
+| HashMap | 0.49μs | 0.43μs | 0.65μs | 1.10μs | 2.08μs |
+| RHMap | 0.35μs | 0.29μs | 0.46μs | 0.87μs | 14.94μs |
+| BTHashMap | 0.51μs | 0.45μs | 0.63μs | 1.17μs | 10.39μs |
+| SwissTable | 0.36μs | 0.32μs | 0.43μs | 0.93μs | 2.33μs |
+

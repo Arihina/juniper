@@ -31,7 +31,7 @@ native_module = Extension(
     "source/skiplist.c"
     ],
     include_dirs=["source", "src/juniper/cext"],
-    extra_compile_args=["-O3"],
+    extra_compile_args=["-O3",  "-msse2"],
 )
  
 setup(
