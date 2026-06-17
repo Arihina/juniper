@@ -13,9 +13,9 @@ from juniper import HashMap, RHMap, BTHashMap, SwissTable
 
 MAPS = [
     ("dict",       dict),
-    ("HashMap",    HashMap),
+    # ("HashMap",    HashMap),
     ("RHMap",      RHMap),
-    ("BTHashMap",  BTHashMap),
+    # ("BTHashMap",  BTHashMap),
     ("SwissTable", SwissTable),
 ]
 
@@ -474,7 +474,7 @@ def main():
         sizes = [1_000, 2_500, 5_000]
     else:
         N = 500_000
-        sizes = [1_000, 10_000, 30_000, 500_000]
+        sizes = [500_000, 1_000_000, 2_000_000]
 
     print("Juniper Extended Benchmark")
     print(f"Python {sys.version.split()[0]}, N={N:,}, sizes={sizes}")

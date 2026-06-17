@@ -590,7 +590,7 @@ def main():
         sizes = [1_000, 5_000, 10_000]
     else:
         N = 50_000
-        sizes = [1_000, 10_000, 50_000]
+        sizes = [1_000_000, 2_000_000]
 
     print("Juniper Hash Map Benchmark Suite")
     print(f"Python {sys.version.split()[0]}, N={N:,}, sizes={sizes}")
